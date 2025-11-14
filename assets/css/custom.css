@@ -1,0 +1,21 @@
+.btn-loading:disabled {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.btn-loading .spinner-border {
+    display: none;
+}
+
+.btn-loading.loading .spinner-border {
+    display: inline-block;
+    margin-left: 5px;
+    width: 0.9rem;
+    height: 0.9rem;
+    border-width: 2px;
+}
+
+td .btn {
+    min-width: 75px;
+    text-align: center;
+}

@@ -1,0 +1,72 @@
+INSERT INTO users (username, password, nama_lengkap, role_id)
+VALUES ('superadmin', MD5('123456'), 'Super Admin', 1);
+
+-- User: Admin Layanan IMB
+INSERT INTO users (username, password, nama_lengkap, role_id, layanan_id)
+VALUES ('admin_imb', MD5('123456'), 'Admin IMB', 2, 1);
+
+-- User: CS Layanan NIB
+INSERT INTO users (username, password, nama_lengkap, role_id, layanan_id)
+VALUES ('cs_nib', MD5('123456'), 'CS NIB', 3, 2);
+
+-- User: Masyarakat
+INSERT INTO users (username, password, nama_lengkap, role_id)
+VALUES ('fuad', MD5('123456'), 'Fuad Masyarakat', 4);
+
+
+
+
+
+===Masyarakat
+
+Riwayat Antrian?
+
+Halaman Chat CS?
+
+Atau fitur cetak tiket (dengan QR)?
+
+
+- saat jam tutup, admin melakukan tutup layanan, dan status yang belum selesai dijadikan batal semua
+- halaman managemen layanan (superadmin)
+- halaman managemen user (superadmin)
+- lupa password user
+- halaman depan untuk daftar ulang (barcode), daftar manual
+- daftar pilih instansi dulu 
+- buka tutup layanan
+- halaman Verifikasi oleh admin
+- kembalikan status ke terdaftar (ketika dipanggil tapi tidak ada)
+- pengaturan record
+- halaman panggilan
+=====================
+
+
+
+===== admin layanan
+
+🔜 Lanjut ke:
+
+v    Halaman “Antrian Hari Ini” interaktif?
+v    Halaman “Panggilan” dengan tombol “Panggil Sekarang”?
+    Atau rekap laporan PDF/Excel?
+
+    tampilkan nama layanan di dashboard admin pelayanan .....
+    anda bertugas sebagai admin ....
+
+
+
+Menampilkan detail antrian saat diklik?
+Menambahkan real-time update atau refresh otomatis?
+Menambahkan fitur panggil suara/layar antrian?
+
+
+
+🔐 Langkah-langkah Mendapatkan App Password Gmail:
+
+Masuk ke akun Gmail Anda di: https://myaccount.google.com
+Masuk ke Keamanan > Verifikasi 2 Langkah (aktifkan jika belum).
+Setelah aktif, buka halaman App Passwords
+Buat App Password baru untuk aplikasi Other → beri nama CI3 PTSP.
+Simpan App Password 16 karakter yang diberikan, misalnya:
+
+nkuokaikzdrsunbk 
+

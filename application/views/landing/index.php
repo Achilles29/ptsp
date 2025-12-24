@@ -22,7 +22,7 @@
         <div class="container position-relative z-2">
             <img src="<?= base_url('assets/img/logo-smaller.jpeg') ?>" alt="Logo MPP Rembang" class="hero-logo mb-3">
             <h1 class="fw-bold mb-2 text-dark">Selamat Datang di <span class="text-primary">Antrian Online</span></h1>
-            <p class="lead mb-4 text-secondary">Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu Kabupaten Rembang</p>
+            <p class="lead mb-4 text-secondary">Mal Pelayanan Publik Kabupaten Rembang</p>
             <div class="d-flex justify-content-center gap-3 flex-wrap">
                 <a href="<?= site_url('auth/login') ?>" class="btn btn-primary btn-lg px-4 shadow-sm"><i class="bi bi-box-arrow-in-right me-2"></i>Login</a>
                 <a href="<?= site_url('auth/register') ?>" class="btn btn-success btn-lg px-4 shadow-sm"><i class="bi bi-person-plus me-2"></i>Daftar</a>

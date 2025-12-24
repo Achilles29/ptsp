@@ -8,6 +8,7 @@ class Admin_layanan extends CI_Controller
     parent::__construct();
     $this->_check_access(2); // role_id 2 = admin layanan
     $this->load->model(['Antrian_model', 'Layanan_model', 'User_model', 'Instansi_model']);
+    date_default_timezone_set('Asia/Jakarta');
   }
 
   private function _check_access($role_id)
@@ -19,13 +20,20 @@ class Admin_layanan extends CI_Controller
 
   public function dashboard()
   {
-    $instansi_id           = $this->session->userdata('instansi_id');
-    $data['title']         = "Dashboard Admin Pelayanan";
-    $data['user']          = $this->session->userdata();
-    $data['ringkasan']     = $this->Antrian_model->get_ringkasan_hari_ini($instansi_id);
+    $instansi_id = $this->session->userdata('instansi_id');
+
+    $data['title']          = "Dashboard Admin Pelayanan";
+    $data['user']           = $this->session->userdata();
+
+    // ringkasan
+    $data['ringkasan']      = $this->Antrian_model->get_ringkasan_hari_ini($instansi_id);
     $data['jumlah_layanan'] = $this->Layanan_model->count_by_instansi($instansi_id);
-    $data['antrian']       = $this->Antrian_model->get_today_by_instansi($instansi_id);
-    // $data['kuota']      = $this->Layanan_model->get_kuota_layanan($instansi_id);
+
+    // daftar antrian hari ini
+    $data['antrian']        = $this->Antrian_model->get_today_by_instansi($instansi_id);
+
+    // antrian 10 terbaru
+    $data['antrian_terbaru'] = $this->Antrian_model->get_latest_today($instansi_id);
 
     $this->load->view('templates/_header', $data);
     $this->load->view('templates/_sidebar', $data);
@@ -33,18 +41,89 @@ class Admin_layanan extends CI_Controller
     $this->load->view('templates/_footer');
   }
 
+
   public function antrian_hari_ini()
   {
-    $instansi_id     = $this->session->userdata('instansi_id');
-    $data['title']   = "Antrian Hari Ini";
-    $data['user']    = $this->session->userdata();
-    $data['antrian'] = $this->Antrian_model->get_today_by_instansi($instansi_id);
+    $instansi_id = $this->session->userdata('instansi_id');
+    $search = $this->input->get('search') ?? '';
+    $limit  = (int) ($this->input->get('limit') ?? 25);
+
+    // Ambil query ?page= (bisa berisi nomor halaman atau offset)
+    $page_param = (int) ($this->input->get('page') ?? 0);
+
+    // 🧠 Cek apakah pagination kirim offset (>= limit)
+    if ($page_param >= $limit) {
+      $offset = $page_param;
+      $page = floor($offset / $limit) + 1;
+    } else {
+      $page = max($page_param, 1);
+      $offset = ($page - 1) * $limit;
+    }
+
+    $this->load->library('pagination');
+    $total_rows = $this->Antrian_model->count_today_by_instansi($instansi_id, $search);
+
+    // ✅ Config Pagination
+    $config['base_url'] = site_url('admin_layanan/antrian_hari_ini');
+    $config['page_query_string'] = true;
+    $config['query_string_segment'] = 'page';
+    $config['total_rows'] = $total_rows;
+    $config['per_page'] = $limit;
+    $config['reuse_query_string'] = true;
+
+    // ✅ Bootstrap 5 Style
+    $config['full_tag_open'] = '<nav><ul class="pagination justify-content-center">';
+    $config['full_tag_close'] = '</ul></nav>';
+    $config['attributes'] = ['class' => 'page-link'];
+    $config['first_tag_open'] = '<li class="page-item">';
+    $config['first_tag_close'] = '</li>';
+    $config['last_tag_open'] = '<li class="page-item">';
+    $config['last_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li class="page-item">';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_tag_open'] = '<li class="page-item">';
+    $config['prev_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="page-item active"><span class="page-link">';
+    $config['cur_tag_close'] = '</span></li>';
+    $config['num_tag_open'] = '<li class="page-item">';
+    $config['num_tag_close'] = '</li>';
+
+    $this->pagination->initialize($config);
+
+    // ✅ Ambil data
+    $data['title'] = "Antrian Hari Ini";
+    $data['user'] = $this->session->userdata();
+    $data['antrian'] = $this->Antrian_model->get_today_by_instansi($instansi_id, $limit, $offset, $search);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['search'] = $search;
+    $data['limit'] = $limit;
+    $data['offset'] = $offset;
+    $data['total_rows'] = $total_rows;
 
     $this->load->view('templates/_header', $data);
     $this->load->view('templates/_sidebar', $data);
     $this->load->view('admin_layanan/antrian_hari_ini', $data);
     $this->load->view('templates/_footer');
   }
+
+
+  public function antrian_hari_ini_ajax()
+  {
+    $instansi_id = $this->session->userdata('instansi_id');
+    $search = $this->input->get('search') ?? '';
+    $limit  = (int) ($this->input->get('limit') ?? 25);
+    $offset = 0;
+
+    $this->load->model('Antrian_model');
+
+    $data['antrian'] = $this->Antrian_model->get_today_by_instansi($instansi_id, $limit, $offset, $search);
+    $data['offset']  = $offset;
+
+    // ✅ hanya load bagian tabel (tanpa layout)
+    $this->load->view('admin_layanan/_partial_antrian_ajax', $data);
+  }
+
+
 
   public function panggil($id)
   {
@@ -119,9 +198,9 @@ class Admin_layanan extends CI_Controller
 
   public function refresh_antrian()
   {
-    $instansi_id     = $this->session->userdata('instansi_id');
-    $data['antrian'] = $this->Antrian_model->get_today_by_instansi($instansi_id);
-    $this->load->view('admin_layanan/_partial_antrian_table', $data);
+    $instansi_id = $this->session->userdata('instansi_id');
+    $antrian = $this->Antrian_model->get_today_by_instansi($instansi_id, 25, 0);
+    $this->load->view('admin_layanan/_partial_antrian_table', ['antrian' => $antrian, 'offset' => 0]);
   }
 
   public function jumlah_antrian_hari_ini()
@@ -224,7 +303,9 @@ class Admin_layanan extends CI_Controller
     $config['per_page'] = $limit;
     $config['page_query_string'] = TRUE;
     $config['query_string_segment'] = 'page';
+    $config['use_page_numbers'] = TRUE;
     $config['reuse_query_string'] = TRUE;
+
 
     // Bootstrap pagination style
     $config['full_tag_open'] = '<nav><ul class="pagination justify-content-center">';
@@ -276,5 +357,34 @@ class Admin_layanan extends CI_Controller
     $this->db->where('id', $id)->update('antrian', ['status' => $status]);
     $this->session->set_flashdata('success', 'Status antrian berhasil diperbarui.');
     redirect('admin_layanan/riwayat_antrian');
+  }
+  public function rekap_laporan()
+  {
+    $tanggal = $this->input->get('tanggal') ?? date('Y-m-d');
+    $limit = $this->input->get('limit') ?? 10;
+    $page = $this->input->get('page') ?? 1;
+    $start = ($page - 1) * $limit;
+
+    $data['rekap'] = $this->Antrian_model->get_rekap($tanggal, $limit, $start);
+    $data['total_rows'] = $this->Antrian_model->count_rekap($tanggal);
+    $data['tanggal'] = $tanggal;
+    $data['limit'] = $limit;
+    $data['page'] = $page;
+
+    $this->load->library('pagination');
+    $config['base_url'] = base_url("admin_layanan/rekap_laporan?tanggal=$tanggal&limit=$limit");
+    $config['total_rows'] = $data['total_rows'];
+    $config['per_page'] = $limit;
+    $config['page_query_string'] = true;
+    $config['query_string_segment'] = 'page';
+    $config['reuse_query_string'] = true;
+    // config bootstrap pagination style seperti biasa...
+    $this->pagination->initialize($config);
+
+
+    $this->load->view('templates/_header', $data);
+    $this->load->view('templates/_sidebar', $data);
+    $this->load->view('admin_layanan/rekap_laporan', $data);
+    $this->load->view('templates/_footer');
   }
 }

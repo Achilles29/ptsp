@@ -29,42 +29,51 @@
                     <th>Nama Instansi</th>
                     <th>Deskripsi</th>
                     <th>Loket</th>
+                    <th>Status Layanan</th>
+                    <th>Status Aktif</th>
                     <th style="width:15%">Aksi</th>
                 </tr>
             </thead>
             <tbody id="instansiTableBody">
-                <?php if (empty($instansi)): ?>
+                <?php foreach ($instansi as $i => $ins): ?>
                     <tr>
-                        <td colspan="6" class="text-center text-muted py-3">Tidak ada data instansi.</td>
+                        <td class="text-center"><?= $start + $i + 1 ?></td>
+                        <td><?= $ins->kode_instansi ?></td>
+                        <td><?= $ins->nama_instansi ?></td>
+                        <td><?= $ins->deskripsi ?></td>
+                        <td class="text-center"><?= $ins->loket ?></td>
+                        <td class="text-center">
+                            <span class="badge bg-<?= $ins->status_layanan === 'buka' ? 'success' : 'secondary' ?>">
+                                <?= ucfirst($ins->status_layanan) ?>
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-<?= $ins->is_aktif ? 'primary' : 'danger' ?>">
+                                <?= $ins->is_aktif ? 'Aktif' : 'Nonaktif' ?>
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-warning btn-edit"
+                                data-id="<?= $ins->id ?>"
+                                data-kode="<?= $ins->kode_instansi ?>"
+                                data-nama="<?= $ins->nama_instansi ?>"
+                                data-deskripsi="<?= $ins->deskripsi ?>"
+                                data-loket="<?= $ins->loket ?>"
+                                data-status="<?= $ins->status_layanan ?>"
+                                data-aktif="<?= $ins->is_aktif ?>"
+                                data-bs-toggle="modal" data-bs-target="#editModal">
+                                <i class="ri-edit-line"></i> Edit
+                            </button>
+                            <a href="<?= base_url('superadmin/instansi_delete/' . $ins->id) ?>"
+                                class="btn btn-sm btn-danger"
+                                onclick="return confirm('Hapus instansi ini?')">
+                                <i class="ri-delete-bin-line"></i> Hapus
+                            </a>
+                        </td>
                     </tr>
-                <?php else: ?>
-                    <?php foreach ($instansi as $i => $ins): ?>
-                        <tr>
-                            <td class="text-center"><?= $start + $i + 1 ?></td>
-                            <td><?= htmlspecialchars($ins->kode_instansi ?? '') ?></td>
-                            <td><?= htmlspecialchars($ins->nama_instansi ?? '') ?></td>
-                            <td><?= htmlspecialchars($ins->deskripsi ?? '') ?></td>
-                            <td class="text-center"><?= htmlspecialchars($ins->loket ?? '-') ?></td>
-                            <td class="text-center">
-                                <button class="btn btn-sm btn-warning btn-edit"
-                                    data-id="<?= $ins->id ?>"
-                                    data-kode="<?= htmlspecialchars($ins->kode_instansi ?? '') ?>"
-                                    data-nama="<?= htmlspecialchars($ins->nama_instansi ?? '') ?>"
-                                    data-deskripsi="<?= htmlspecialchars($ins->deskripsi ?? '') ?>"
-                                    data-loket="<?= htmlspecialchars($ins->loket ?? '') ?>"
-                                    data-bs-toggle="modal" data-bs-target="#editModal">
-                                    <i class="ri-edit-line"></i> Edit
-                                </button>
-                                <a href="<?= base_url('superadmin/instansi_delete/' . $ins->id) ?>"
-                                    class="btn btn-sm btn-danger"
-                                    onclick="return confirm('Hapus instansi ini?')">
-                                    <i class="ri-delete-bin-line"></i> Hapus
-                                </a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
+                <?php endforeach; ?>
             </tbody>
+
 
         </table>
     </div>
@@ -87,6 +96,21 @@
                 <div class="mb-3"><label>Nama Instansi</label><input name="nama_instansi" class="form-control" required></div>
                 <div class="mb-3"><label>Deskripsi</label><textarea name="deskripsi" class="form-control"></textarea></div>
                 <div class="mb-3"><label>Loket</label><input name="loket" class="form-control" placeholder="Contoh: Loket A / Front Desk"></div>
+                <div class="mb-3">
+                    <label>Status Layanan</label>
+                    <select name="status_layanan" class="form-select">
+                        <option value="buka">Buka</option>
+                        <option value="tutup">Tutup</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label>Status Aktif</label>
+                    <select name="is_aktif" class="form-select">
+                        <option value="1">Aktif</option>
+                        <option value="0">Nonaktif</option>
+                    </select>
+                </div>
+
             </div>
             <div class="modal-footer"><button class="btn btn-primary">Simpan</button></div>
         </form>
@@ -105,6 +129,21 @@
                 <div class="mb-3"><label>Nama Instansi</label><input name="nama_instansi" class="form-control" required></div>
                 <div class="mb-3"><label>Deskripsi</label><textarea name="deskripsi" class="form-control"></textarea></div>
                 <div class="mb-3"><label>Loket</label><input name="loket" class="form-control" placeholder="Contoh: Loket A / Front Desk"></div>
+                <div class="mb-3">
+                    <label>Status Layanan</label>
+                    <select name="status_layanan" class="form-select">
+                        <option value="buka">Buka</option>
+                        <option value="tutup">Tutup</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label>Status Aktif</label>
+                    <select name="is_aktif" class="form-select">
+                        <option value="1">Aktif</option>
+                        <option value="0">Nonaktif</option>
+                    </select>
+                </div>
+
             </div>
             <div class="modal-footer"><button class="btn btn-primary">Update</button></div>
         </form>
@@ -120,6 +159,9 @@
             f.nama_instansi.value = this.dataset.nama;
             f.deskripsi.value = this.dataset.deskripsi;
             f.loket.value = this.dataset.loket;
+            f.status_layanan.value = this.dataset.status;
+            f.is_aktif.value = this.dataset.aktif;
+
         });
     });
 

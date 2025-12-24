@@ -21,8 +21,21 @@ class Masyarakat extends CI_Controller
 
   public function dashboard()
   {
+    $this->load->model('Masyarakat_model');
+
+    $user_id = $this->session->userdata('user_id');
+
     $data['title'] = "Dashboard Masyarakat";
-    $data['user'] = $this->session->userdata();
+    $data['user']  = $this->session->userdata();
+
+    // Ringkasan dashboard
+    $data['aktif']        = $this->Masyarakat_model->count_antrian_aktif($user_id);
+    $data['layanan_aktif'] = $this->Masyarakat_model->get_layanan_aktif($user_id);
+    $data['riwayat']      = $this->Masyarakat_model->count_riwayat($user_id);
+    $data['chat_pending'] = $this->Masyarakat_model->count_chat_pending($user_id);
+    $data['antrian_detail'] = $this->Masyarakat_model->get_antrian_aktif_detail($user_id);
+
+
     $this->load->view('templates/_header', $data);
     $this->load->view('templates/_sidebar', $data);
     $this->load->view('masyarakat/dashboard', $data);
@@ -110,6 +123,29 @@ class Masyarakat extends CI_Controller
     echo json_encode($data);
   }
 
+  public function antrian_saya()
+  {
+    $user_id = $this->session->userdata('user_id');
+
+    $data['title'] = "Antrian Saya";
+    $data['user']  = $this->session->userdata();
+
+    // Ambil semua antrian user (status aktif)
+    $data['antrian'] = $this->db
+      ->select('a.*, jl.nama_layanan, i.nama_instansi')
+      ->from('antrian a')
+      ->join('jenis_layanan jl', 'jl.id = a.layanan_id', 'left')
+      ->join('instansi i', 'i.id = jl.instansi_id', 'left')
+      ->where('a.user_id', $user_id)
+      ->where_in('a.status', ['terdaftar', 'dipanggil'])
+      ->order_by('a.created_at', 'DESC')
+      ->get()->result();
+
+    $this->load->view('templates/_header', $data);
+    $this->load->view('templates/_sidebar', $data);
+    $this->load->view('masyarakat/antrian_saya', $data);
+    $this->load->view('templates/_footer');
+  }
 
   public function riwayat_antrian()
   {
@@ -151,5 +187,82 @@ class Masyarakat extends CI_Controller
     }
 
     redirect('masyarakat/riwayat_antrian');
+  }
+
+  public function scan_qr($antrian_id)
+  {
+    $data['antrian_id'] = $antrian_id;
+    $this->load->view('masyarakat/scan_qr', $data);
+  }
+
+
+  public function checkin_user($id)
+  {
+    $user_id = $this->session->userdata('user_id');
+
+    // Validasi kepemilikan
+    $antrian = $this->db->get_where('antrian', [
+      'id'     => $id,
+      'user_id' => $user_id,
+      'tanggal' => date('Y-m-d'),
+      'hadir'  => 0
+    ])->row();
+
+    if (!$antrian) {
+      $this->session->set_flashdata('error', 'Antrian tidak valid atau sudah check-in');
+      redirect('masyarakat/antrian_saya');
+    }
+
+    $this->db->where('id', $id)->update('antrian', ['hadir' => 1]);
+
+    $this->session->set_flashdata('success', 'Check-in berhasil!');
+    redirect('masyarakat/antrian_saya');
+  }
+
+  public function checkin()
+  {
+    // halaman kamera scan
+    $this->load->view('masyarakat/checkin');
+  }
+
+  public function qrcode($id)
+  {
+    $user_id = $this->session->userdata('user_id');
+
+    // Validasi bahwa QR ini milik user tersebut
+    $antrian = $this->db->get_where('antrian', [
+      'id'      => $id,
+      'user_id' => $user_id
+    ])->row();
+
+    if (!$antrian) {
+      echo "QR tidak valid.";
+      return;
+    }
+
+    $data['url'] = site_url("masyarakat/checkin_url/" . $id);
+    $this->load->view('masyarakat/qrcode', $data);
+  }
+
+  public function checkin_url($id)
+  {
+    $antrian = $this->db->get_where('antrian', [
+      'id'      => $id,
+      'tanggal' => date('Y-m-d')
+    ])->row();
+
+    if (!$antrian) {
+      echo "QR tidak valid atau antrian tidak ditemukan.";
+      return;
+    }
+
+    // Update hadir
+    $this->db->where('id', $id)->update('antrian', [
+      'hadir' => 1
+    ]);
+
+    echo "<h1 style='text-align:center;margin-top:50px;color:green'>
+            Check-in Berhasil ✔
+          </h1>";
   }
 }

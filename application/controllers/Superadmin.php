@@ -19,8 +19,19 @@ class Superadmin extends CI_Controller
 
   public function dashboard()
   {
+    $this->load->model('Dashboard_model');
+
     $data['title'] = "Dashboard Super Admin";
     $data['user'] = $this->session->userdata();
+
+    // Ambil ringkasan data
+    $data['total_instansi']       = $this->Dashboard_model->count_instansi();
+    $data['total_layanan']        = $this->Dashboard_model->count_layanan();
+    $data['total_admin']          = $this->Dashboard_model->count_admin();
+    $data['total_cs']             = $this->Dashboard_model->count_cs();
+    $data['antrian_hari_ini']     = $this->Dashboard_model->count_antrian_today();
+    $data['antrian_per_instansi'] = $this->Dashboard_model->get_antrian_today_per_instansi();
+
     $this->load->view('templates/_header', $data);
     $this->load->view('templates/_sidebar', $data);
     $this->load->view('superadmin/dashboard', $data);
@@ -274,25 +285,30 @@ class Superadmin extends CI_Controller
   public function instansi_add()
   {
     $data = [
-      'kode_instansi' => $this->input->post('kode_instansi'),
-      'nama_instansi' => $this->input->post('nama_instansi'),
-      'deskripsi'     => $this->input->post('deskripsi'),
-      'loket'         => $this->input->post('loket'),
-      'created_at'    => date('Y-m-d H:i:s'),
-      'updated_at'    => date('Y-m-d H:i:s')
+      'kode_instansi'    => $this->input->post('kode_instansi'),
+      'nama_instansi'    => $this->input->post('nama_instansi'),
+      'deskripsi'        => $this->input->post('deskripsi'),
+      'loket'            => $this->input->post('loket'),
+      'status_layanan'   => $this->input->post('status_layanan') ?? 'buka',
+      'is_aktif'        => $this->input->post('is_aktif') ?? 1,
+      'created_at'       => date('Y-m-d H:i:s'),
+      'updated_at'       => date('Y-m-d H:i:s')
     ];
     $this->db->insert('instansi', $data);
     redirect('superadmin/instansi');
   }
 
+
   public function instansi_edit($id)
   {
     $data = [
-      'kode_instansi' => $this->input->post('kode_instansi'),
-      'nama_instansi' => $this->input->post('nama_instansi'),
-      'deskripsi'     => $this->input->post('deskripsi'),
-      'loket'         => $this->input->post('loket'),
-      'updated_at'    => date('Y-m-d H:i:s')
+      'kode_instansi'    => $this->input->post('kode_instansi'),
+      'nama_instansi'    => $this->input->post('nama_instansi'),
+      'deskripsi'        => $this->input->post('deskripsi'),
+      'loket'            => $this->input->post('loket'),
+      'status_layanan'   => $this->input->post('status_layanan'),
+      'is_aktif'        => $this->input->post('is_aktif'),
+      'updated_at'       => date('Y-m-d H:i:s')
     ];
     $this->db->update('instansi', $data, ['id' => $id]);
     redirect('superadmin/instansi');

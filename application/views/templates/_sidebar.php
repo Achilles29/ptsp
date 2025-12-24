@@ -2,14 +2,29 @@
 
         <?php
         $role_id = $this->session->userdata('role_id');
+
+        // Tentukan dashboard sesuai role
+        if ($role_id == 1) {
+            $dashboard_url = base_url('superadmin/dashboard');
+        } elseif ($role_id == 2) {
+            $dashboard_url = base_url('admin_layanan/dashboard');
+        } elseif ($role_id == 3) {
+            $dashboard_url = base_url('cs/dashboard');
+            // kalau nama controllernya bukan cs/dashboard, ganti sesuai milik Anda
+        } elseif ($role_id == 4) {
+            $dashboard_url = base_url('masyarakat/dashboard');
+        } else {
+            $dashboard_url = base_url('dashboard'); // fallback jika tidak ada role
+        }
         ?>
+
         <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
             <div class="app-brand demo">
-                <a href="<?= base_url('dashboard'); ?>" class="app-brand-link">
+                <a href="<?= $dashboard_url; ?>" class="app-brand-link">
                     <span class="app-brand-logo demo me-1">
-                        <span class="text-primary">
-                            <i class="ri ri-home-smile-line fs-2"></i>
-                        </span>
+                        <img src="<?= base_url('assets/img/logo.png') ?>"
+                            alt="Logo Pemkab Rembang"
+                            style="height:60px; width:auto; border-radius:4px; object-fit:contain;" />
                     </span>
                     <span class="app-brand-text demo menu-text fw-semibold ms-2">MPP</span>
                 </a>
@@ -22,90 +37,165 @@
             <div class="menu-inner-shadow"></div>
 
             <ul class="menu-inner py-1">
+
                 <!-- Dashboard -->
                 <li class="menu-item">
-                    <a href="<?= base_url('dashboard'); ?>" class="menu-link">
-                        <i class="menu-icon ri ri-dashboard-line"></i>
+                    <a href="<?= $dashboard_url; ?>" class="menu-link">
+                        <i class="menu-icon ri ri-home-3-line"></i>
                         <div>Dashboard</div>
                     </a>
                 </li>
 
-                <?php if ($role_id == 1): // Super Admin 
+                <?php if ($role_id == 1): // SUPERADMIN 
                 ?>
                     <li class="menu-header">Superadmin</li>
-                    <li class="menu-item"><a href="<?= base_url('superadmin/users'); ?>" class="menu-link"><i class="menu-icon ri ri-user-settings-line"></i>
+
+                    <li class="menu-item">
+                        <a href="<?= base_url('superadmin/users'); ?>" class="menu-link">
+                            <i class="menu-icon ri ri-user-star-line"></i>
                             <div>Manajemen User</div>
-                        </a></li>
-                    <li class="menu-item"><a href="<?= base_url('superadmin/instansi'); ?>" class="menu-link"><i class="menu-icon ri ri-folder-settings-line"></i>
+                        </a>
+                    </li>
+
+                    <li class="menu-item">
+                        <a href="<?= base_url('superadmin/instansi'); ?>" class="menu-link">
+                            <i class="menu-icon ri ri-government-line"></i>
                             <div>Instansi</div>
-                        </a></li>
-                    <li class="menu-item"><a href="<?= base_url('jenislayanan'); ?>" class="menu-link"><i class="menu-icon ri ri-folder-settings-line"></i>
+                        </a>
+                    </li>
+
+                    <li class="menu-item">
+                        <a href="<?= base_url('jenislayanan'); ?>" class="menu-link">
+                            <i class="menu-icon ri ri-briefcase-2-line"></i>
                             <div>Jenis Layanan</div>
-                        </a></li>
-                    <li class="menu-item"><a href="<?= base_url('antrian_display'); ?>" class="menu-link"><i class="menu-icon ri ri-folder-settings-line"></i>
-                            <div>Monitor</div>
-                        </a></li>
-                    <li class="menu-item"><a href="<?= base_url('pendaftaran/manual'); ?>" class="menu-link"><i class="menu-icon ri ri-folder-settings-line"></i>
+                        </a>
+                    </li>
+
+                    <li class="menu-item">
+                        <a href="<?= base_url('antrian_display'); ?>" class="menu-link">
+                            <i class="menu-icon ri ri-tv-2-line"></i>
+                            <div>Monitor Display</div>
+                        </a>
+                    </li>
+
+                    <li class="menu-item">
+                        <a href="<?= base_url('pendaftaran/manual'); ?>" class="menu-link">
+                            <i class="menu-icon ri ri-user-follow-line"></i>
                             <div>Front Desk</div>
-                        </a></li>
+                        </a>
+                    </li>
 
-                    <li class="menu-item"><a href="<?= base_url('superadmin/video_setting'); ?>" class="menu-link"><i class="menu-icon ri ri-folder-settings-line"></i>
-                            <div>Pengaturan video</div>
-                        </a></li>
+                    <li class="menu-item">
+                        <a href="<?= base_url('pendaftaran/manual_v2'); ?>" class="menu-link">
+                            <i class="menu-icon ri ri-group-line"></i>
+                            <div>Front Desk V2</div>
+                        </a>
+                    </li>
 
-                    <li class="menu-item"><a href="<?= base_url('superadmin/laporan'); ?>" class="menu-link"><i class="menu-icon ri ri-bar-chart-grouped-line"></i>
+                    <li class="menu-item">
+                        <a href="<?= base_url('superadmin/video_setting'); ?>" class="menu-link">
+                            <i class="menu-icon ri ri-slideshow-line"></i>
+                            <div>Pengaturan Video</div>
+                        </a>
+                    </li>
+
+                    <li class="menu-item">
+                        <a href="<?= base_url('superadmin/laporan'); ?>" class="menu-link">
+                            <i class="menu-icon ri ri-bar-chart-line"></i>
                             <div>Laporan</div>
-                        </a></li>
+                        </a>
+                    </li>
 
-                <?php elseif ($role_id == 2): // Admin Layanan 
+                <?php elseif ($role_id == 2): // ADMIN LAYANAN 
                 ?>
                     <li class="menu-header">Admin Layanan</li>
-                    <li class="menu-item"><a href="<?= base_url('admin_layanan/antrian_hari_ini'); ?>" class="menu-link"><i class="menu-icon ri ri-list-check"></i>
+
+                    <li class="menu-item">
+                        <a href="<?= base_url('admin_layanan/antrian_hari_ini'); ?>" class="menu-link">
+                            <i class="menu-icon ri ri-time-line"></i>
                             <div>Antrian Hari Ini</div>
-                        </a></li>
-                    <li class="menu-item"><a href="<?= base_url('admin_layanan/riwayat_antrian'); ?>" class="menu-link"><i class="menu-icon ri ri-list-check"></i>
+                        </a>
+                    </li>
+
+                    <li class="menu-item">
+                        <a href="<?= base_url('admin_layanan/riwayat_antrian'); ?>" class="menu-link">
+                            <i class="menu-icon ri ri-file-list-3-line"></i>
                             <div>Riwayat Antrian</div>
-                        </a></li>
+                        </a>
+                    </li>
 
-                    <li class="menu-item"><a href="<?= base_url('admin_layanan/kelola_layanan'); ?>" class="menu-link"><i class="menu-icon ri ri-list-check"></i>
+                    <li class="menu-item">
+                        <a href="<?= base_url('admin_layanan/kelola_layanan'); ?>" class="menu-link">
+                            <i class="menu-icon ri ri-settings-5-line"></i>
                             <div>Kelola Layanan</div>
-                        </a></li>
-                    <li class="menu-item"><a href="<?= base_url('admin_layanan/laporan'); ?>" class="menu-link"><i class="menu-icon ri ri-clipboard-line"></i>
-                            <div>Laporan Antrian</div>
-                        </a></li>
+                        </a>
+                    </li>
 
-                <?php elseif ($role_id == 3): // Customer Service Layanan 
+                    <li class="menu-item">
+                        <a href="<?= base_url('admin_layanan/laporan'); ?>" class="menu-link">
+                            <i class="menu-icon ri ri-pie-chart-2-line"></i>
+                            <div>Laporan Antrian</div>
+                        </a>
+                    </li>
+
+                <?php elseif ($role_id == 3): // CUSTOMER SERVICE 
                 ?>
                     <li class="menu-header">Customer Service</li>
-                    <li class="menu-item"><a href="<?= base_url('cs/cek_antrian'); ?>" class="menu-link"><i class="menu-icon ri ri-search-line"></i>
-                            <div>Cek Antrian</div>
-                        </a></li>
 
-                <?php elseif ($role_id == 4): // Masyarakat 
+                    <li class="menu-item">
+                        <a href="<?= base_url('cs/cek_antrian'); ?>" class="menu-link">
+                            <i class="menu-icon ri ri-search-eye-line"></i>
+                            <div>Cek Antrian</div>
+                        </a>
+                    </li>
+
+                <?php elseif ($role_id == 4): // MASYARAKAT 
                 ?>
                     <li class="menu-header">Layanan Publik</li>
-                    <li class="menu-item"><a href="<?= base_url('masyarakat/daftar_antrian'); ?>" class="menu-link"><i class="menu-icon ri ri-calendar-check-line"></i>
+
+                    <li class="menu-item">
+                        <a href="<?= base_url('masyarakat/daftar_antrian'); ?>" class="menu-link">
+                            <i class="menu-icon ri ri-add-box-line"></i>
                             <div>Daftar Antrian</div>
-                        </a></li>
-                    <li class="menu-item"><a href="<?= base_url('masyarakat/riwayat_antrian'); ?>" class="menu-link"><i class="menu-icon ri ri-time-line"></i>
+                        </a>
+                    </li>
+
+                    <li class="menu-item">
+                        <a href="<?= base_url('masyarakat/antrian_saya'); ?>" class="menu-link">
+                            <i class="menu-icon ri ri-ticket-2-line"></i>
+                            <div>Antrian Saya</div>
+                        </a>
+                    </li>
+
+
+                    <li class="menu-item">
+                        <a href="<?= base_url('masyarakat/riwayat_antrian'); ?>" class="menu-link">
+                            <i class="menu-icon ri ri-history-line"></i>
                             <div>Riwayat Antrian</div>
-                        </a></li>
+                        </a>
+                    </li>
+
                 <?php endif; ?>
 
                 <!-- Separator -->
                 <li class="menu-header mt-3">Pengguna</li>
+
                 <li class="menu-item">
                     <a href="<?= base_url('auth/logout'); ?>" class="menu-link">
                         <i class="menu-icon ri ri-logout-box-line"></i>
                         <div>Logout</div>
                     </a>
                 </li>
+
             </ul>
+
         </aside>
         <!-- / Menu -->
 
         <!-- Layout container -->
         <div class="layout-page">
+
+
 
             <!-- Navbar -->
             <nav class="layout-navbar container-xxl navbar-detached navbar navbar-expand-xl align-items-center bg-navbar-theme"
@@ -116,91 +206,7 @@
                     </a>
                 </div>
 
-                <div class="navbar-nav-right d-flex align-items-center justify-content-end" id="navbar-collapse">
-                    <!-- Search -->
-                    <div class="navbar-nav align-items-center">
-                        <div class="nav-item d-flex align-items-center">
-                            <i class="icon-base ri ri-search-line icon-lg lh-0"></i>
-                            <input type="text" class="form-control border-0 shadow-none" placeholder="Search..."
-                                aria-label="Search..." />
-                        </div>
-                    </div>
-                    <!-- /Search -->
 
-                    <ul class="navbar-nav flex-row align-items-center ms-md-auto">
-                        <!-- Place this tag where you want the button to render. -->
-                        <li class="nav-item lh-1 me-4">
-                            <a class="github-button"
-                                href="https://github.com/themeselection/materio-bootstrap-html-admin-template-free"
-                                data-icon="octicon-star" data-size="large" data-show-count="true"
-                                aria-label="Star themeselection/materio-html-admin-template-free on GitHub">Star</a>
-                        </li>
-
-                        <!-- User -->
-                        <li class="nav-item navbar-dropdown dropdown-user dropdown">
-                            <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);"
-                                data-bs-toggle="dropdown">
-                                <div class="avatar avatar-online">
-                                    <img src="../assets/img/avatars/1.png" alt="alt" class="rounded-circle" />
-                                </div>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        <div class="d-flex">
-                                            <div class="flex-shrink-0 me-3">
-                                                <div class="avatar avatar-online">
-                                                    <img src="../assets/img/avatars/1.png" alt="alt"
-                                                        class="w-px-40 h-auto rounded-circle" />
-                                                </div>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <h6 class="mb-0">John Doe</h6>
-                                                <small class="text-body-secondary">Admin</small>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <div class="dropdown-divider my-1"></div>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="icon-base ri ri-user-line icon-md me-3"></i>
-                                        <span>My Profile</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="icon-base ri ri-settings-4-line icon-md me-3"></i>
-                                        <span>Settings</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        <span class="d-flex align-items-center align-middle">
-                                            <i class="flex-shrink-0 icon-base ri ri-bank-card-line icon-md me-3"></i>
-                                            <span class="flex-grow-1 align-middle ms-1">Billing Plan</span>
-                                            <span class="flex-shrink-0 badge rounded-pill bg-danger">4</span>
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <div class="dropdown-divider my-1"></div>
-                                </li>
-                                <li>
-                                    <div class="d-grid px-4 pt-2 pb-1">
-                                        <a class="btn btn-danger d-flex" href="/auth/logout">
-                                            <small class="align-middle">Logout</small>
-                                            <i class="ri ri-logout-box-r-line ms-2 ri-xs"></i>
-                                        </a>
-                                    </div>
-                                </li>
-                            </ul>
-                        </li>
-                        <!--/ User -->
-                    </ul>
-                </div>
             </nav>
 
             <!-- / Navbar -->

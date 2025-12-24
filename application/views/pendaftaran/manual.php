@@ -95,56 +95,87 @@
                 </form>
             </div>
         </div>
-
         <!-- 📱 BAGIAN BARCODE DISPLAY -->
-        <div class="card text-center">
+        <div class="card text-center mb-4">
             <div class="section-title bg-success" style="background:linear-gradient(90deg,#00796b,#009688);">
                 <i class="bi bi-qr-code me-2"></i> Scan Barcode untuk Check-In
             </div>
             <div class="card-body bg-white">
                 <div id="qrcode" class="qr-box mb-3"></div>
-                <p class="fw-semibold text-muted">Silakan scan barcode ini untuk melakukan pendaftaran ulang.</p>
+
+                <p class="fw-semibold text-muted mb-3">Pengunjung online dapat scan barcode ini untuk melakukan check-in.</p>
+
+                <hr>
+
+                <!-- Tombol Check-in Manual -->
+                <button class="btn btn-outline-success fw-bold w-75" id="btnCheckinManual">
+                    <i class="bi bi-person-check-fill me-2"></i> Check-In Manual (Tanpa Scan)
+                </button>
             </div>
         </div>
 
     </div>
 
+    <!-- Modal Check-in Manual -->
+    <div class="modal fade" id="modalManual" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">Check-In Manual</h5>
+                    <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div id="listManual"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <script>
         $(function() {
 
-            // Load layanan dinamis
+            // ==========================
+            // 1. QR Code Statis (langsung muncul)
+            // ==========================
+            new QRCode(document.getElementById("qrcode"), {
+                text: "<?= site_url('pendaftaran/checkin') ?>",
+                width: 260,
+                height: 260,
+            });
+
+
+            // ==========================
+            // 2. Loading layanan dinamis
+            // ==========================
             $('#instansi').change(function() {
-                $.getJSON('<?= base_url("ajax/get_layanan_by_instansi/") ?>' + $(this).val(), function(data) {
+                const id = $(this).val();
+                if (!id) return;
+                $.getJSON('<?= site_url("pendaftaran/get_layanan_by_instansi/") ?>' + id, function(data) {
                     let opt = '<option value="">Pilih Jenis Layanan</option>';
                     data.forEach(d => opt += `<option value="${d.id}">${d.nama_layanan}</option>`);
                     $('#layanan').html(opt);
                 });
             });
 
-            // Cetak antrian dan insert data
+            // ==========================
+            // 3. Generate & Cetak Antrian
+            // ==========================
             $('#formCetak').on('submit', function(e) {
                 e.preventDefault();
-                $.post('<?= base_url("pendaftaran/generate_antrian") ?>', $(this).serialize(), function(res) {
+                $.post('<?= site_url("pendaftaran/generate_antrian") ?>', $(this).serialize(), function(res) {
                     const r = JSON.parse(res);
                     if (r.success) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Nomor Antrian Dibuat',
-                            html: `<h1 class="text-primary fw-bold">${r.nomor}</h1><p>Silakan tunggu panggilan di layar utama.</p>`,
+                            html: `<h1 class="text-primary fw-bold">${r.nomor}</h1>
+                    <p>Silakan tunggu panggilan di layar utama.</p>`,
                             confirmButtonText: 'Cetak Sekarang',
                             confirmButtonColor: '#a00037'
                         }).then(() => {
-                            window.open('<?= base_url("antrian/cetak/") ?>' + r.nomor, '_blank');
-                            // Buat QR baru untuk pengunjung scan
-                            $('#qrcode').empty();
-                            new QRCode(document.getElementById("qrcode"), {
-                                text: "<?= base_url('antrian/checkin/') ?>" + r.id,
-                                width: 270,
-                                height: 270,
-                                colorDark: "#000000",
-                                colorLight: "#ffffff",
-                                correctLevel: QRCode.CorrectLevel.H
-                            });
+                            window.print();
                         });
                     } else {
                         Swal.fire('Gagal', 'Terjadi kesalahan saat membuat antrian.', 'error');
@@ -152,59 +183,19 @@
                 });
             });
 
+            // ==========================
+            // 4. Tombol Check-in Manual
+            // ==========================
+            $("#btnCheckinManual").on("click", function() {
+                $("#modalManual").modal("show");
+                $("#listManual").html("<p class='text-center text-muted'>Memuat data...</p>");
+
+                $.get("<?= site_url('pendaftaran/list_antrian_manual_today') ?>", function(res) {
+                    $("#listManual").html(res);
+                });
+            });
+
         });
     </script>
 
-</body>
-
-</html>
-
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
-<script>
-    $(function() {
-
-        // 🔹 Load layanan dinamis
-        $('#instansi').change(function() {
-            const id = $(this).val();
-            if (!id) return;
-            $.getJSON('<?= site_url("pendaftaran/get_layanan_by_instansi/") ?>' + id, function(data) {
-                let opt = '<option value="">Pilih Jenis Layanan</option>';
-                data.forEach(d => opt += `<option value="${d.id}">${d.nama_layanan}</option>`);
-                $('#layanan').html(opt);
-            });
-        });
-
-        // 🔹 Generate dan cetak antrian
-        $('#formCetak').on('submit', function(e) {
-            e.preventDefault();
-            $.post('<?= site_url("pendaftaran/generate_antrian") ?>', $(this).serialize(), function(res) {
-                const r = JSON.parse(res);
-                if (r.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Nomor Antrian Dibuat',
-                        html: `<h1 class="text-primary fw-bold">${r.nomor}</h1><p>Silakan tunggu panggilan di layar utama.</p>`,
-                        confirmButtonText: 'Cetak Sekarang',
-                        confirmButtonColor: '#a00037'
-                    }).then(() => {
-                        window.open('<?= site_url("antrian/cetak/") ?>' + r.nomor, '_blank');
-
-                        // Buat QRCode baru (reset dulu)
-                        $('#qrcode').empty();
-                        new QRCode(document.getElementById("qrcode"), {
-                            text: "<?= site_url('antrian/checkin/') ?>" + r.id,
-                            width: 260,
-                            height: 260,
-                            colorDark: "#000000",
-                            colorLight: "#ffffff",
-                            correctLevel: QRCode.CorrectLevel.H
-                        });
-                    });
-                } else {
-                    Swal.fire('Gagal', 'Terjadi kesalahan saat membuat antrian.', 'error');
-                }
-            });
-        });
-
-    });
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

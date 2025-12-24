@@ -14,9 +14,6 @@ INSERT INTO users (username, password, nama_lengkap, role_id)
 VALUES ('fuad', MD5('123456'), 'Fuad Masyarakat', 4);
 
 
-
-
-
 ===Masyarakat
 
 Riwayat Antrian?
@@ -24,7 +21,7 @@ Riwayat Antrian?
 Halaman Chat CS?
 
 Atau fitur cetak tiket (dengan QR)?
-
+halaman pengaturan user masyarakat (ganti nama dll)
 
 - saat jam tutup, admin melakukan tutup layanan, dan status yang belum selesai dijadikan batal semua
 - halaman managemen layanan (superadmin)
@@ -37,8 +34,94 @@ Atau fitur cetak tiket (dengan QR)?
 - kembalikan status ke terdaftar (ketika dipanggil tapi tidak ada)
 - pengaturan record
 - halaman panggilan
+- tambah kolom hadir di antrian (sudah daftar ulang)
 =====================
 
+
+
+🛡 Untuk Superadmin
+1. Laporan Statistik Antrian
+
+    Jumlah antrian per hari/minggu/bulan per instansi.
+
+    Jumlah user aktif.
+
+    Grafik tren jumlah antrian dan kehadiran.
+
+2. Manajemen Jadwal Layanan
+
+    Atur jam buka/tutup per instansi.
+
+    Hari libur nasional atau cuti bersama → disable antrian otomatis.
+
+3. Notifikasi Broadcast ke Semua Admin Layanan
+
+    Kirim pengumuman (misalnya: "Sistem akan maintenance jam 15.00").
+
+    Bisa via email atau WhatsApp Gateway (jika diaktifkan).
+
+
+
+🧑‍💼 Untuk Admin Layanan
+1. Riwayat Tindakan CS
+
+    Log siapa yang memanggil, menandai hadir, atau menyelesaikan antrian.
+
+    Waktu dan urutan tindakan tercatat untuk audit.
+
+2. Laporan Kepuasan Layanan
+
+    Tambahkan fitur rating setelah selesai (oleh masyarakat).
+
+    Statistik rating rata-rata, kritik/saran per layanan.
+
+3. Multi-Counter Support
+
+    Jika 1 layanan punya lebih dari 1 meja/loket → admin bisa set counter A, B, C.
+
+4. Live Monitoring
+
+    Tampilkan antrian real-time seperti dashboard TV.
+
+    Bisa ditampilkan di layar televisi di tempat layanan.
+
+
+
+👨‍👩‍👧 Untuk Masyarakat (User)
+1. Riwayat Antrian Saya
+
+    Tampilkan semua antrian yang pernah diambil.
+
+    Status: Selesai, Batal, Tidak Hadir.
+
+2. Notifikasi Antrian
+
+    Kirim notifikasi via WhatsApp atau Email saat antrian hampir dipanggil.
+
+    Bisa diatur: “Ingatkan 5 nomor sebelum giliran”.
+
+3. Batalkan Antrian Mandiri
+
+    Jika pengguna tidak bisa hadir, bisa batalkan via web (dengan batas waktu tertentu).
+
+4. Ubah Jadwal
+
+    Jika masih di hari yang sama dan belum dipanggil, bisa ubah jam ke slot lain.
+
+
+
+📦 Umum & Tambahan
+1. QR Code Cek Antrian
+
+    Masyarakat bisa scan QR di kantor untuk lihat posisi antrian terkini.
+
+2. Export Laporan
+
+    Superadmin dan Admin bisa ekspor data antrian (CSV/Excel) berdasarkan filter tanggal/layanan/status.
+
+3. Mode Offline
+
+    Jika internet mati, admin tetap bisa input manual → akan tersinkron saat online.
 
 
 ===== admin layanan
@@ -70,3 +153,13 @@ Simpan App Password 16 karakter yang diberikan, misalnya:
 
 nkuokaikzdrsunbk 
 
+
+
+
+
+TRUNCATE
+SET FOREIGN_KEY_CHECKS = 0;
+
+TRUNCATE TABLE users;
+
+SET FOREIGN_KEY_CHECKS = 1;

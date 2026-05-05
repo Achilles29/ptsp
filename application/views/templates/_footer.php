@@ -52,7 +52,7 @@
 
 
 <script src="<?= base_url('assets/vendor/js/bootstrap.js'); ?>"></script>
-
+<script src="<?= base_url('assets/libs/sweetalert2/sweetalert2.all.min.js'); ?>"></script>
 
 <!-- <script src="../assets/vendor/libs/node-waves/node-waves.js"></script> -->
 <script src="<?= base_url('assets/vendor/libs/node-waves/node-waves.js'); ?>"></script>

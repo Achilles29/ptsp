@@ -1,0 +1,10 @@
+{
+    "printers": [
+        {
+            "lokasi": "Frontdesk",
+            "vid": null,
+            "pid": null,
+            "port": 9100
+        }
+    ]
+}

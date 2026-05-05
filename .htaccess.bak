@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # kalau request adalah file/folder asli, jangan rewrite
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # selain itu, lempar ke CI
+    RewriteRule ^(.*)$ index.php/$1 [L]
+</IfModule>
+
+Options -Indexes
+

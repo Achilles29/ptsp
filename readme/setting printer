@@ -1,0 +1,13 @@
+pip install flask python-escpos pyusb
+
+
+🔎 Cara tahu VID & PID printer
+
+Karena driver tidak ada, pakai USBDeview:
+
+https://www.nirsoft.net/utils/usb_devices_view.html
+
+Colok printer → lihat:
+
+Vendor ID : 0416
+Product ID: 5011

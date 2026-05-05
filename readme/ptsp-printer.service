@@ -1,0 +1,13 @@
+[Unit]
+Description=PTSP USB Printer Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/ptsp-print
+ExecStart=/opt/ptsp-print/venv/bin/python /opt/ptsp-print/thermal_server.py
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

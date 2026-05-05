@@ -1,0 +1,20 @@
+1️⃣ Bikin shortcut khusus
+
+Klik kanan Desktop → New → Shortcut
+
+Isi:
+
+"C:\Program Files\Google\Chrome\Application\chrome.exe" 
+--kiosk 
+--autoplay-policy=no-user-gesture-required 
+--disable-infobars 
+--disable-session-crashed-bubble 
+--no-first-run 
+https://antrian-mpp.rembangkab.go.id
+
+
+2️⃣ Autostart saat Windows nyala
+
+Tekan Win + R → ketik:
+
+shell:startup

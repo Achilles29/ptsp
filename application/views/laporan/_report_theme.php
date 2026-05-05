@@ -135,7 +135,7 @@
     border-radius: 28px;
     background: rgba(255, 255, 255, .96);
     box-shadow: 0 18px 36px rgba(15, 23, 42, .05);
-    overflow: hidden;
+    overflow: visible;
   }
 
   .report-card-header {
@@ -145,6 +145,8 @@
     flex-wrap: wrap;
     gap: 1rem;
     padding: 1.2rem 1.35rem 0;
+    border-radius: 28px 28px 0 0;
+    overflow: hidden;
   }
 
   .report-card-title {
@@ -239,6 +241,7 @@
     vertical-align: middle;
     color: #1e293b;
     border-bottom: 1px solid #eef2f7;
+    white-space: nowrap;
   }
 
   .report-table tbody tr:hover td {

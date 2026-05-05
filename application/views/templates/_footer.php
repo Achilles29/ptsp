@@ -82,7 +82,7 @@
   .table-responsive {
     border: 1px solid #c7cfdb;
     border-radius: 12px;
-    overflow: hidden;
+    overflow-x: auto;
     background: #fff;
   }
   table.table {

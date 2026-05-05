@@ -496,6 +496,11 @@ table.table thead th {
   color: #334155;
 }
 
+/* Kartu yang berisi table-responsive: jangan clip scroll horizontal */
+.portal-table-card {
+  overflow: visible;
+}
+
 .portal-table-card table {
   margin-bottom: 0;
 }

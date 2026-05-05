@@ -228,7 +228,7 @@ class Auth extends CI_Controller
       $errors = [];
       if ($this->User_model->username_exists($input['username'])) $errors[] = 'Username';
       if ($this->User_model->email_exists($input['email'])) $errors[] = 'Email';
-      if ($this->User_model->nik_exists($input['nik'])) $errors[] = 'NIK';
+      if (!empty($input['nik']) && $this->User_model->nik_exists($input['nik'])) $errors[] = 'NIK';
       if ($this->User_model->no_hp_exists($input['no_hp'])) $errors[] = 'No HP';
 
       if (!empty($errors)) {

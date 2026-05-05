@@ -72,83 +72,92 @@
             </div>
           <?php endif; ?>
 
-          <div class="alert alert-info border-0 mb-4" style="background:#eef4ff;color:#183b74;">
-            <div class="fw-semibold mb-2">
-              <i class="ri ri-mail-check-line me-1"></i>
-              Belum menerima email verifikasi?
+          <div class="alert alert-info border-0 mb-4" style="background:#eef4ff;color:#183b74;border-radius:12px;">
+            <a href="#resend-box" class="d-flex align-items-center gap-2 text-decoration-none" style="color:inherit;" data-bs-toggle="collapse">
+              <i class="ri ri-mail-check-line"></i>
+              <span class="fw-semibold">Belum menerima email verifikasi?</span>
+              <i class="ri ri-arrow-down-s-line ms-auto"></i>
+            </a>
+            <div class="collapse mt-3" id="resend-box">
+              <p class="mb-2" style="font-size:.9rem;">Masukkan email yang dipakai mendaftar. Sistem akan mengizinkan kirim ulang setelah jeda <?= $cooldown_minutes ?> menit dari pengiriman terakhir.</p>
+              <form method="post" action="<?= base_url('auth/resend_verification') ?>" class="row g-2">
+                <input type="hidden" name="source" value="register">
+                <div class="col-8">
+                  <input type="email" name="email" class="form-control auth-form-control" placeholder="nama@email.com" value="<?= htmlspecialchars($verification_email ?? '') ?>" required>
+                </div>
+                <div class="col-4 d-grid">
+                  <button type="submit" class="btn btn-outline-primary">
+                    <i class="ri ri-mail-send-line me-1"></i> Kirim Ulang
+                  </button>
+                </div>
+              </form>
             </div>
-            <p class="mb-3">Masukkan email yang dipakai mendaftar. Sistem akan mengizinkan kirim ulang setelah jeda <?= $cooldown_minutes ?> menit dari pengiriman terakhir.</p>
-            <form method="post" action="<?= base_url('auth/resend_verification') ?>" class="row g-2">
-              <input type="hidden" name="source" value="register">
-              <div class="col-md-8">
-                <input type="email" name="email" class="form-control auth-form-control" placeholder="nama@email.com" value="<?= htmlspecialchars($verification_email ?? '') ?>" required>
-              </div>
-              <div class="col-md-4 d-grid">
-                <button type="submit" class="btn btn-outline-primary">
-                  <i class="ri ri-mail-send-line me-1"></i> Kirim Ulang
-                </button>
-              </div>
-            </form>
           </div>
 
           <form method="post" action="<?= base_url('auth/register') ?>">
+            <input type="hidden" name="nik" value="<?= set_value('nik') ?>">
 
             <!-- DATA PRIBADI -->
-            <div class="form-section-title text-primary fw-bold">
-              <i class="ri ri-id-card-line me-1"></i> Data Pribadi
-            </div>
-
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label>Nama Lengkap</label>
-                <input type="text" name="nama_lengkap" class="form-control auth-form-control"
-                       value="<?= set_value('nama_lengkap') ?>" required>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label>NIK</label>
-                <input type="text" name="nik" class="form-control auth-form-control"
-                       value="<?= set_value('nik') ?>" required>
-              </div>
+            <div class="form-section-title">
+              <i class="ri ri-id-card-line"></i> Data Pribadi
             </div>
 
             <div class="mb-3">
-              <label>Alamat</label>
-              <textarea name="alamat" class="form-control" rows="2" required><?= set_value('alamat') ?></textarea>
+              <label class="form-label">Nama Lengkap</label>
+              <input type="text" name="nama_lengkap" class="form-control auth-form-control"
+                     placeholder="Masukkan nama lengkap sesuai KTP"
+                     value="<?= set_value('nama_lengkap') ?>" required>
             </div>
 
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label>No HP</label>
+            <div class="mb-3">
+              <label class="form-label">Alamat</label>
+              <textarea name="alamat" class="form-control auth-form-control" rows="2"
+                        placeholder="Alamat tempat tinggal" required><?= set_value('alamat') ?></textarea>
+            </div>
+
+            <div class="row g-3 mb-1">
+              <div class="col-md-6">
+                <label class="form-label">No HP / WhatsApp</label>
                 <input type="text" name="no_hp" class="form-control auth-form-control"
+                       placeholder="08xxxxxxxxxx"
                        value="<?= set_value('no_hp') ?>" required>
               </div>
-              <div class="col-md-6 mb-3">
-                <label>Email</label>
+              <div class="col-md-6">
+                <label class="form-label">Email</label>
                 <input type="email" name="email" class="form-control auth-form-control"
+                       placeholder="nama@email.com"
                        value="<?= set_value('email') ?>" required>
               </div>
             </div>
 
             <!-- AKUN -->
-            <div class="form-section-title mt-3 text-primary fw-bold">
-              <i class="ri ri-shield-user-line me-1"></i> Informasi Akun
+            <div class="form-section-title mt-4">
+              <i class="ri ri-shield-user-line"></i> Informasi Akun
             </div>
 
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label>Username</label>
+            <div class="row g-3 mb-1">
+              <div class="col-md-6">
+                <label class="form-label">Username</label>
                 <input type="text" name="username" class="form-control auth-form-control"
+                       placeholder="Nama pengguna untuk login"
                        value="<?= set_value('username') ?>" required>
               </div>
-              <div class="col-md-6 mb-3">
-                <label>Password</label>
-                <input type="password" name="password" class="form-control auth-form-control" required>
+              <div class="col-md-6">
+                <label class="form-label">Password</label>
+                <div class="position-relative">
+                  <input type="password" name="password" id="regPassword" class="form-control auth-form-control"
+                         placeholder="Minimal 6 karakter" required>
+                  <button type="button" class="btn btn-link position-absolute end-0 top-50 translate-middle-y pe-3 text-muted"
+                          onclick="togglePass('regPassword', this)" tabindex="-1" style="line-height:1;">
+                    <i class="ri ri-eye-off-line"></i>
+                  </button>
+                </div>
               </div>
             </div>
 
-            <button class="btn btn-primary w-100 auth-action mt-2">
+            <button class="btn btn-primary w-100 auth-action mt-4">
               <i class="ri ri-mail-send-line me-1"></i>
-              Daftar & Kirim Verifikasi Email
+              Daftar &amp; Kirim Verifikasi Email
             </button>
           </form>
 
@@ -185,6 +194,19 @@
 
 <!-- JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function togglePass(id, btn) {
+  const inp = document.getElementById(id);
+  const icon = btn.querySelector('i');
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    icon.className = 'ri ri-eye-line';
+  } else {
+    inp.type = 'password';
+    icon.className = 'ri ri-eye-off-line';
+  }
+}
+</script>
 
 </body>
 </html>

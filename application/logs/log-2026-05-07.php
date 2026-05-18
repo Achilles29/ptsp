@@ -1,0 +1,30 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+
+ERROR - 2026-05-07 00:32:42 --> 404 Page Not Found: Wp-json/gravitysmtp
+ERROR - 2026-05-07 01:07:20 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-07 02:24:09 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-07 04:00:45 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-07 04:00:46 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-05-07 05:05:05 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-07 05:22:34 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-05-07 07:08:34 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-07 08:08:18 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-05-07 09:55:47 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-07 10:10:13 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-05-07 11:13:36 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-07 11:13:38 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-05-07 13:06:24 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-07 13:06:26 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-05-07 15:05:53 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-07 15:05:54 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-05-07 16:09:19 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-07 17:05:58 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-05-07 17:52:34 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-07 19:08:33 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-07 19:08:34 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-05-07 20:52:09 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-07 20:52:10 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-05-07 21:56:41 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-07 21:56:42 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-05-07 23:01:35 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-07 23:01:37 --> 404 Page Not Found: Sitemapxml/index

@@ -118,55 +118,42 @@ switch ($a->status) {
     <?php if ($a->status === 'dipanggil' && (int) $a->hadir === 1): ?>
 
       <!-- 🔊 PANGGIL ULANG (antrian aktif) -->
-      <button type="button"
+      <a href="<?= base_url('admin_layanan/panggil_sync/'.$a->id) ?>"
               class="btn btn-sm btn-warning btn-panggil"
-              data-id="<?= $a->id ?>">
+              onclick="return confirm('Panggil ulang antrian ini?')">
         <i class="bi bi-megaphone"></i>
         Panggil Ulang
-      </button>
+      </a>
 
-    <?php elseif ($a->status === 'terdaftar' && (int) $a->hadir === 1 && !$ada_dipanggil): ?>
+    <?php elseif ($a->status === 'terdaftar'): ?>
 
       <!-- 🔊 PANGGIL (tidak ada antrian aktif) -->
-      <button type="button"
+      <a href="<?= base_url('admin_layanan/panggil_sync/'.$a->id) ?>"
               class="btn btn-sm btn-warning btn-panggil"
-              data-id="<?= $a->id ?>">
+              onclick="return confirm('Panggil antrian ini?')">
         <i class="bi bi-megaphone"></i>
-        Panggil
-      </button>
+        <?= (int) $a->hadir === 1 ? 'Panggil' : 'Panggil (Auto Check-In)' ?>
+      </a>
 
-    <?php elseif ($a->status === 'terdaftar' && (int) $a->hadir === 1 && $ada_dipanggil): ?>
-
-      <!-- 🔒 Terkunci karena ada antrian sedang aktif -->
-      <span class="btn btn-sm btn-outline-warning disabled">
-        <i class="bi bi-lock"></i> Ada aktif
-      </span>
-
-    <?php endif; ?>
-
-    <?php if ($a->status === 'terdaftar' && (int) $a->hadir !== 1): ?>
-      <span class="btn btn-sm btn-outline-secondary disabled">
-        <i class="bi bi-clock-history"></i> Menunggu Check-In
-      </span>
     <?php endif; ?>
 
     <?php if ($a->status === 'terdaftar'): ?>
 
       <!-- ❌ BATAL -->
-      <button type="button"
+      <a href="<?= base_url('admin_layanan/batal/'.$a->id) ?>"
               class="btn btn-sm btn-outline-danger btn-batal"
-              data-url="<?= base_url('admin_layanan/batal/'.$a->id) ?>">
+              onclick="return confirm('Batalkan antrian ini?')">
         <i class="bi bi-x-circle"></i> Batal
-      </button>
+      </a>
 
     <?php elseif ($a->status === 'dipanggil'): ?>
 
       <!-- ✅ SELESAI -->
-      <button type="button"
+      <a href="<?= base_url('admin_layanan/selesai/'.$a->id) ?>"
               class="btn btn-sm btn-success btn-selesai"
-              data-id="<?= $a->id ?>">
+              onclick="return confirm('Selesaikan antrian ini?')">
         <i class="bi bi-check2-circle"></i> Selesai
-      </button>
+      </a>
 
     <?php endif; ?>
 
@@ -306,7 +293,17 @@ $(function () {
     const btn  = $(this);
     const id   = btn.data('id');
     const url  = btn.data('url');
+    const fallbackUrl = btn.data('fallback-url');
     const type = btn.hasClass('btn-panggil') ? 'panggil' : 'batal';
+
+    if (typeof Swal === 'undefined' || typeof Swal.fire !== 'function') {
+      if (type === 'panggil') {
+        if (fallbackUrl) window.location.href = fallbackUrl;
+        return;
+      }
+      if (url) window.location.href = url;
+      return;
+    }
 
     Swal.fire({
       title: type === 'panggil'
@@ -342,7 +339,13 @@ $(function () {
             const msg = xhr.responseJSON && xhr.responseJSON.message
               ? xhr.responseJSON.message
               : 'Terjadi kesalahan saat memanggil antrian';
-            Swal.fire('Gagal', msg, 'error');
+            Swal.fire({
+              title: 'Gagal',
+              text: msg + '\nDialihkan ke mode pemanggilan langsung.',
+              icon: 'error'
+            }).then(() => {
+              if (fallbackUrl) window.location.href = fallbackUrl;
+            });
           }
         });
       } else {
@@ -466,7 +469,9 @@ $(document).on('submit', '#formHasilLayanan', function (e) {
 
 
 <script>
-  document.querySelector('input[name="search"]').addEventListener('keyup', function() {
+  const searchInput = document.querySelector('input[name="search"]');
+  if (searchInput) {
+  searchInput.addEventListener('keyup', function() {
     const keyword = this.value.trim();
     const limit = document.querySelector('select[name="limit"]').value;
     const tbody = document.querySelector('#antrian-body');
@@ -489,4 +494,5 @@ $(document).on('submit', '#formHasilLayanan', function (e) {
       location.href = location.pathname + '?limit=' + limit;
     }
   });
+  }
 </script>

@@ -101,7 +101,8 @@ public function get_data($slug = null)
   $current = $this->db->get()->row();
 
   /* ================= SLIDER =================
-     HISTORI PANGGILAN (TIDAK MEMICU AUDIO)
+     DAFTAR ANTRIAN AKTIF DIPANGGIL
+     (status selesai/batal tidak ditampilkan)
   ============================================ */
   $this->db->select('
     a.nomor_antrian,
@@ -113,7 +114,7 @@ public function get_data($slug = null)
   $this->db->join('instansi i', 'i.id = j.instansi_id', 'left');
 
   $this->db->where('a.tanggal', $today);
-  $this->db->where_in('a.status', ['dipanggil', 'selesai']);
+  $this->db->where('a.status', 'dipanggil');
   $this->db->where('a.called_at IS NOT NULL', null, false);
   if ($selected_sector) {
     $this->db->where('i.sektor_id', (int) $selected_sector->id);

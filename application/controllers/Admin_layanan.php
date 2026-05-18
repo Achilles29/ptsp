@@ -155,9 +155,8 @@ class Admin_layanan extends CI_Controller
 
 
 
-public function panggil($id)
+private function _proses_panggil($id)
 {
-  // Ambil data nomor antrian & loket
   $row = $this->db
     ->select('a.id, a.nomor_antrian, a.status, a.hadir, i.loket')
     ->from('antrian a')
@@ -168,30 +167,22 @@ public function panggil($id)
     ->row();
 
   if (!$row) {
-    return $this->output
-      ->set_content_type('application/json')
-      ->set_output(json_encode([
-        'success' => false,
-        'message' => 'Data antrian tidak ditemukan'
-      ]));
+    return [
+      'success' => false,
+      'message' => 'Data antrian tidak ditemukan'
+    ];
   }
 
   if (!in_array($row->status, ['terdaftar', 'dipanggil'], true)) {
-    return $this->output
-      ->set_content_type('application/json')
-      ->set_output(json_encode([
-        'success' => false,
-        'message' => 'Antrian tidak dalam status yang bisa dipanggil'
-      ]));
+    return [
+      'success' => false,
+      'message' => 'Antrian tidak dalam status yang bisa dipanggil'
+    ];
   }
 
+  $auto_checkin = false;
   if ((int) $row->hadir !== 1) {
-    return $this->output
-      ->set_content_type('application/json')
-      ->set_output(json_encode([
-        'success' => false,
-        'message' => 'Antrian belum check-in, jadi belum bisa dipanggil'
-      ]));
+    $auto_checkin = true;
   }
 
   // Cegah memanggil antrian baru jika sudah ada antrian berstatus 'dipanggil'
@@ -207,17 +198,16 @@ public function panggil($id)
       ->count_all_results();
 
     if ($ada_aktif > 0) {
-      return $this->output
-        ->set_content_type('application/json')
-        ->set_output(json_encode([
-          'success' => false,
-          'message' => 'Masih ada antrian yang sedang dipanggil. Selesaikan dulu sebelum memanggil berikutnya.'
-        ]));
+      return [
+        'success' => false,
+        'message' => 'Masih ada antrian yang sedang dipanggil. Selesaikan dulu sebelum memanggil berikutnya.'
+      ];
     }
   }
 
   // ✅ UPDATE STATUS + CALLED_AT (KHUSUS PANGGIL)
   $this->db->set([
+    'hadir'      => 1,
     'status'     => 'dipanggil',
     'called_at'  => date('Y-m-d H:i:s'), // ⬅️ INI KUNCI AUDIO
     'updated_at' => date('Y-m-d H:i:s')
@@ -225,22 +215,74 @@ public function panggil($id)
   $this->db->where('id', $id);
   $ok = $this->db->update('antrian');
 
-  // Output JSON ke AJAX
+  return [
+    'success'        => (bool) $ok,
+    'message'        => $ok
+      ? ($auto_checkin ? 'Antrian berhasil dipanggil (otomatis check-in)' : 'Antrian berhasil dipanggil')
+      : 'Gagal memanggil antrian',
+    'nomor_antrian'  => $row->nomor_antrian,
+    'loket'          => $row->loket
+  ];
+}
+
+public function panggil($id)
+{
+  $result = $this->_proses_panggil($id);
   return $this->output
     ->set_content_type('application/json')
-    ->set_output(json_encode([
-      'success'        => (bool) $ok,
-      'message'        => $ok ? 'Antrian berhasil dipanggil' : 'Gagal memanggil antrian',
-      'nomor_antrian'  => $row->nomor_antrian,
-      'loket'          => $row->loket
-    ]));
+    ->set_output(json_encode($result));
+}
+
+public function panggil_sync($id)
+{
+  $result = $this->_proses_panggil($id);
+
+  if (!empty($result['success'])) {
+    $this->session->set_flashdata(
+      'success',
+      $result['message'] . ' (' . ($result['nomor_antrian'] ?? '-') . ')'
+    );
+  } else {
+    $this->session->set_flashdata('error', $result['message'] ?? 'Gagal memanggil antrian');
+  }
+
+  redirect('admin_layanan/antrian_hari_ini');
 }
 
 
 
   public function selesai($id)
   {
-    $this->session->set_flashdata('error', 'Gunakan form hasil layanan untuk menyelesaikan antrian.');
+    $antrian = $this->db
+      ->select('id, status')
+      ->from('antrian')
+      ->where('id', $id)
+      ->get()
+      ->row();
+
+    if (!$antrian) {
+      $this->session->set_flashdata('error', 'Data antrian tidak ditemukan.');
+      redirect('admin_layanan/antrian_hari_ini');
+      return;
+    }
+
+    if ($antrian->status !== 'dipanggil') {
+      $this->session->set_flashdata('error', 'Hanya antrian berstatus dipanggil yang bisa diselesaikan.');
+      redirect('admin_layanan/antrian_hari_ini');
+      return;
+    }
+
+    $ok = $this->db->where('id', $id)->update('antrian', [
+      'status'     => 'selesai',
+      'updated_at' => date('Y-m-d H:i:s')
+    ]);
+
+    if ($ok) {
+      $this->session->set_flashdata('success', 'Antrian berhasil diselesaikan.');
+    } else {
+      $this->session->set_flashdata('error', 'Gagal menyelesaikan antrian.');
+    }
+
     redirect('admin_layanan/antrian_hari_ini');
   }
 

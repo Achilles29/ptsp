@@ -1,0 +1,35 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+
+ERROR - 2026-05-14 00:39:06 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-14 00:39:07 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-05-14 02:05:09 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-14 02:05:10 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-05-14 03:44:19 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-14 04:18:02 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-05-14 05:06:19 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-14 05:31:54 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-14 07:02:59 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-14 07:03:00 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-05-14 08:05:35 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-14 08:28:15 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-05-14 09:13:41 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-14 09:13:43 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-05-14 10:20:50 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-14 10:20:51 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-05-14 10:54:01 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-05-14 11:49:43 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-14 11:49:44 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-05-14 13:43:13 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-14 13:43:14 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-05-14 15:51:17 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-14 15:51:19 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-05-14 17:04:55 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-14 17:04:57 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-05-14 18:53:52 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-14 18:53:53 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-05-14 19:56:50 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-14 21:00:28 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-14 21:00:29 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-05-14 21:45:33 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-14 22:58:13 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-05-14 22:58:15 --> 404 Page Not Found: Sitemapxml/index

@@ -31,52 +31,40 @@ foreach ($antrian as $_a) {
     <?php if ($a->status === 'dipanggil' && (int) $a->hadir === 1): ?>
 
       <!-- 🔊 PANGGIL ULANG (antrian aktif) -->
-      <button type="button"
+      <a href="<?= base_url('admin_layanan/panggil_sync/'.$a->id) ?>"
               class="btn btn-sm btn-warning btn-panggil"
-              data-id="<?= $a->id ?>">
+              onclick="return confirm('Panggil ulang antrian ini?')">
         <i class="bi bi-megaphone"></i> Panggil Ulang
-      </button>
+      </a>
 
-    <?php elseif ($a->status === 'terdaftar' && (int) $a->hadir === 1 && !$ada_dipanggil): ?>
+    <?php elseif ($a->status === 'terdaftar'): ?>
 
       <!-- 🔊 PANGGIL -->
-      <button type="button"
+      <a href="<?= base_url('admin_layanan/panggil_sync/'.$a->id) ?>"
               class="btn btn-sm btn-warning btn-panggil"
-              data-id="<?= $a->id ?>">
-        <i class="bi bi-megaphone"></i> Panggil
-      </button>
+              onclick="return confirm('Panggil antrian ini?')">
+        <i class="bi bi-megaphone"></i> <?= (int) $a->hadir === 1 ? 'Panggil' : 'Panggil (Auto Check-In)' ?>
+      </a>
 
-    <?php elseif ($a->status === 'terdaftar' && (int) $a->hadir === 1 && $ada_dipanggil): ?>
-
-      <span class="btn btn-sm btn-outline-warning disabled">
-        <i class="bi bi-lock"></i> Ada aktif
-      </span>
-
-    <?php endif; ?>
-
-    <?php if ($a->status === 'terdaftar' && (int) $a->hadir !== 1): ?>
-      <span class="btn btn-sm btn-outline-secondary disabled">
-        <i class="bi bi-clock-history"></i> Menunggu Check-In
-      </span>
     <?php endif; ?>
 
     <?php if ($a->status === 'terdaftar'): ?>
 
       <!-- ❌ BATAL -->
-      <button type="button"
+      <a href="<?= base_url('admin_layanan/batal/'.$a->id) ?>"
               class="btn btn-sm btn-outline-danger btn-batal"
-              data-url="<?= base_url('admin_layanan/batal/'.$a->id) ?>">
+              onclick="return confirm('Batalkan antrian ini?')">
         <i class="bi bi-x-circle"></i> Batal
-      </button>
+      </a>
 
     <?php elseif ($a->status === 'dipanggil'): ?>
 
       <!-- ✅ SELESAI -->
-      <button type="button"
+      <a href="<?= base_url('admin_layanan/selesai/'.$a->id) ?>"
               class="btn btn-sm btn-success btn-selesai"
-              data-id="<?= $a->id ?>">
+              onclick="return confirm('Selesaikan antrian ini?')">
         <i class="bi bi-check2-circle"></i> Selesai
-      </button>
+      </a>
 
     <?php endif; ?>
 

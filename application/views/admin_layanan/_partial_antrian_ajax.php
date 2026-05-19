@@ -26,23 +26,29 @@ foreach ($antrian as $_a) {
   </td>
 
 <td>
-  <div class="d-flex flex-wrap justify-content-center gap-1">
+  <div class="aksi-wrap">
 
     <?php if ($a->status === 'dipanggil' && (int) $a->hadir === 1): ?>
 
       <!-- 🔊 PANGGIL ULANG (antrian aktif) -->
-      <a href="<?= base_url('admin_layanan/panggil_sync/'.$a->id) ?>"
+      <a href="javascript:void(0)" data-endpoint="<?= site_url('admin_layanan/panggil/') . (int) $a->id ?>"
               class="btn btn-sm btn-warning btn-panggil"
-              onclick="return confirm('Panggil ulang antrian ini?')">
+              data-action="panggil"
+              onclick="event.preventDefault();event.stopPropagation();if(window.runQueueAction){window.runQueueAction(this);}return false;"
+              data-id="<?= (int) $a->id ?>"
+             >
         <i class="bi bi-megaphone"></i> Panggil Ulang
       </a>
 
     <?php elseif ($a->status === 'terdaftar'): ?>
 
       <!-- 🔊 PANGGIL -->
-      <a href="<?= base_url('admin_layanan/panggil_sync/'.$a->id) ?>"
+      <a href="javascript:void(0)" data-endpoint="<?= site_url('admin_layanan/panggil/') . (int) $a->id ?>"
               class="btn btn-sm btn-warning btn-panggil"
-              onclick="return confirm('Panggil antrian ini?')">
+              data-action="panggil"
+              onclick="event.preventDefault();event.stopPropagation();if(window.runQueueAction){window.runQueueAction(this);}return false;"
+              data-id="<?= (int) $a->id ?>"
+             >
         <i class="bi bi-megaphone"></i> <?= (int) $a->hadir === 1 ? 'Panggil' : 'Panggil (Auto Check-In)' ?>
       </a>
 
@@ -51,18 +57,24 @@ foreach ($antrian as $_a) {
     <?php if ($a->status === 'terdaftar'): ?>
 
       <!-- ❌ BATAL -->
-      <a href="<?= base_url('admin_layanan/batal/'.$a->id) ?>"
+      <a href="javascript:void(0)" data-endpoint="<?= site_url('admin_layanan/batal/') . (int) $a->id ?>"
               class="btn btn-sm btn-outline-danger btn-batal"
-              onclick="return confirm('Batalkan antrian ini?')">
+              data-action="batal"
+              onclick="event.preventDefault();event.stopPropagation();if(window.runQueueAction){window.runQueueAction(this);}return false;"
+              data-id="<?= (int) $a->id ?>"
+             >
         <i class="bi bi-x-circle"></i> Batal
       </a>
 
     <?php elseif ($a->status === 'dipanggil'): ?>
 
       <!-- ✅ SELESAI -->
-      <a href="<?= base_url('admin_layanan/selesai/'.$a->id) ?>"
+      <a href="javascript:void(0)" data-endpoint="<?= site_url('admin_layanan/selesai/') . (int) $a->id ?>"
               class="btn btn-sm btn-success btn-selesai"
-              onclick="return confirm('Selesaikan antrian ini?')">
+              data-action="selesai"
+              onclick="event.preventDefault();event.stopPropagation();if(window.runQueueAction){window.runQueueAction(this);}return false;"
+              data-id="<?= (int) $a->id ?>"
+             >
         <i class="bi bi-check2-circle"></i> Selesai
       </a>
 

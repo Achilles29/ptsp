@@ -71,6 +71,14 @@ class Admin_layanan extends CI_Controller
     $allowed_kode = $this->_get_allowed_kode_layanan();
     $search = $this->input->get('search') ?? '';
     $limit  = (int) ($this->input->get('limit') ?? 25);
+    $tab = strtolower((string) ($this->input->get('tab') ?? 'aktif'));
+    $hadir = strtolower((string) ($this->input->get('hadir') ?? 'semua'));
+    $status = strtolower((string) ($this->input->get('status') ?? ''));
+    if (!in_array($tab, ['aktif', 'selesai', 'semua'], true)) $tab = 'aktif';
+    if (!in_array($hadir, ['semua', 'hadir', 'belum'], true)) $hadir = 'semua';
+    $status_allow = ['terdaftar', 'dipanggil', 'selesai', 'batal', 'tidak_hadir', 'menunggu', 'lewati'];
+    if ($status !== '' && $status !== 'semua' && !in_array($status, $status_allow, true)) $status = '';
+    $filters = ['tab' => $tab, 'hadir' => $hadir, 'status' => $status];
 
     // Ambil query ?page= (bisa berisi nomor halaman atau offset)
     $page_param = (int) ($this->input->get('page') ?? 0);
@@ -89,7 +97,7 @@ class Admin_layanan extends CI_Controller
       $offset = 0;
     }
 
-    $total_rows = $this->Antrian_model->count_today_by_instansi($instansi_id, $search, $allowed_kode);
+    $total_rows = $this->Antrian_model->count_today_by_instansi($instansi_id, $search, $allowed_kode, $filters);
     $pagination_links = '';
     if ($limit > 0) {
       $this->load->library('pagination');
@@ -121,10 +129,13 @@ class Admin_layanan extends CI_Controller
     // ✅ Ambil data
     $data['title'] = "Antrian Hari Ini";
     $data['user'] = $this->session->userdata();
-    $data['antrian'] = $this->Antrian_model->get_today_by_instansi($instansi_id, $limit, $offset, $search, $allowed_kode);
+    $data['antrian'] = $this->Antrian_model->get_today_by_instansi($instansi_id, $limit, $offset, $search, $allowed_kode, $filters);
     $data['pagination'] = $pagination_links;
     $data['search'] = $search;
     $data['limit'] = $limit;
+    $data['tab'] = $tab;
+    $data['hadir'] = $hadir;
+    $data['status'] = $status;
     $data['offset'] = $offset;
     $data['total_rows'] = $total_rows;
 
@@ -142,11 +153,19 @@ class Admin_layanan extends CI_Controller
     $allowed_kode = $this->_get_allowed_kode_layanan();
     $search = $this->input->get('search') ?? '';
     $limit  = (int) ($this->input->get('limit') ?? 25);
+    $tab = strtolower((string) ($this->input->get('tab') ?? 'aktif'));
+    $hadir = strtolower((string) ($this->input->get('hadir') ?? 'semua'));
+    $status = strtolower((string) ($this->input->get('status') ?? ''));
+    if (!in_array($tab, ['aktif', 'selesai', 'semua'], true)) $tab = 'aktif';
+    if (!in_array($hadir, ['semua', 'hadir', 'belum'], true)) $hadir = 'semua';
+    $status_allow = ['terdaftar', 'dipanggil', 'selesai', 'batal', 'tidak_hadir', 'menunggu', 'lewati'];
+    if ($status !== '' && $status !== 'semua' && !in_array($status, $status_allow, true)) $status = '';
+    $filters = ['tab' => $tab, 'hadir' => $hadir, 'status' => $status];
     $offset = 0;
 
     $this->load->model('Antrian_model');
 
-    $data['antrian'] = $this->Antrian_model->get_today_by_instansi($instansi_id, $limit, $offset, $search, $allowed_kode);
+    $data['antrian'] = $this->Antrian_model->get_today_by_instansi($instansi_id, $limit, $offset, $search, $allowed_kode, $filters);
     $data['offset']  = $offset;
 
     // ✅ hanya load bagian tabel (tanpa layout)
@@ -260,13 +279,26 @@ public function panggil_sync($id)
       ->get()
       ->row();
 
+    $is_ajax = $this->input->is_ajax_request();
     if (!$antrian) {
+      if ($is_ajax) {
+        return $this->output->set_content_type('application/json')->set_output(json_encode([
+          'success' => false,
+          'message' => 'Data antrian tidak ditemukan.'
+        ]));
+      }
       $this->session->set_flashdata('error', 'Data antrian tidak ditemukan.');
       redirect('admin_layanan/antrian_hari_ini');
       return;
     }
 
     if ($antrian->status !== 'dipanggil') {
+      if ($is_ajax) {
+        return $this->output->set_content_type('application/json')->set_output(json_encode([
+          'success' => false,
+          'message' => 'Hanya antrian berstatus dipanggil yang bisa diselesaikan.'
+        ]));
+      }
       $this->session->set_flashdata('error', 'Hanya antrian berstatus dipanggil yang bisa diselesaikan.');
       redirect('admin_layanan/antrian_hari_ini');
       return;
@@ -276,6 +308,13 @@ public function panggil_sync($id)
       'status'     => 'selesai',
       'updated_at' => date('Y-m-d H:i:s')
     ]);
+
+    if ($is_ajax) {
+      return $this->output->set_content_type('application/json')->set_output(json_encode([
+        'success' => (bool) $ok,
+        'message' => $ok ? 'Antrian berhasil diselesaikan.' : 'Gagal menyelesaikan antrian.'
+      ]));
+    }
 
     if ($ok) {
       $this->session->set_flashdata('success', 'Antrian berhasil diselesaikan.');
@@ -288,10 +327,16 @@ public function panggil_sync($id)
 
   public function batal($id)
   {
-    $this->db->where('id', $id)->update('antrian', [
+    $ok = $this->db->where('id', $id)->update('antrian', [
       'status'     => 'batal',
       'updated_at' => date('Y-m-d H:i:s')
     ]);
+    if ($this->input->is_ajax_request()) {
+      return $this->output->set_content_type('application/json')->set_output(json_encode([
+        'success' => (bool) $ok,
+        'message' => $ok ? 'Antrian telah dibatalkan.' : 'Gagal membatalkan antrian.'
+      ]));
+    }
     $this->session->set_flashdata('success', 'Antrian telah dibatalkan.');
     redirect('admin_layanan/antrian_hari_ini');
   }
@@ -495,7 +540,13 @@ public function simpan_hasil_layanan()
   {
     $instansi_id = $this->session->userdata('instansi_id');
     $allowed_kode = $this->_get_allowed_kode_layanan();
-    $antrian = $this->Antrian_model->get_today_by_instansi($instansi_id, 25, 0, '', $allowed_kode);
+    $tab = strtolower((string) ($this->input->get('tab') ?? 'aktif'));
+    $hadir = strtolower((string) ($this->input->get('hadir') ?? 'semua'));
+    $status = strtolower((string) ($this->input->get('status') ?? ''));
+    if (!in_array($tab, ['aktif', 'selesai', 'semua'], true)) $tab = 'aktif';
+    if (!in_array($hadir, ['semua', 'hadir', 'belum'], true)) $hadir = 'semua';
+    $filters = ['tab' => $tab, 'hadir' => $hadir, 'status' => $status];
+    $antrian = $this->Antrian_model->get_today_by_instansi($instansi_id, 25, 0, '', $allowed_kode, $filters);
     $this->load->view('admin_layanan/_partial_antrian_table', ['antrian' => $antrian, 'offset' => 0]);
   }
 

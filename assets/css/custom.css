@@ -20,6 +20,101 @@ td .btn {
     text-align: center;
 }
 
+/* Global alert beautification */
+.alert {
+    border: 0 !important;
+    border-left: 4px solid transparent !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    padding: 0.9rem 1rem !important;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #ecfdf3, #dcfce7) !important;
+    color: #166534 !important;
+    border-left-color: #16a34a !important;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #fef2f2, #fee2e2) !important;
+    color: #991b1b !important;
+    border-left-color: #dc2626 !important;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, #fffbeb, #fef3c7) !important;
+    color: #92400e !important;
+    border-left-color: #d97706 !important;
+}
+
+.alert-info,
+.alert-primary,
+.alert-secondary {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe) !important;
+    color: #1e3a8a !important;
+    border-left-color: #2563eb !important;
+}
+
+/* SweetAlert custom style */
+.swal2-popup.portal-swal {
+    border-radius: 18px !important;
+    border: 1px solid rgba(99, 102, 241, 0.2) !important;
+    box-shadow: 0 24px 50px rgba(30, 41, 59, 0.22) !important;
+    background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.12), transparent 38%), #ffffff !important;
+}
+
+.swal2-popup.portal-swal .swal2-title {
+    font-weight: 800 !important;
+    color: #1e293b !important;
+    letter-spacing: .01em;
+}
+
+.swal2-popup.portal-swal .swal2-html-container {
+    color: #475569 !important;
+}
+
+.swal2-popup.portal-swal .swal2-icon {
+    transform: scale(0.9);
+}
+
+.swal2-popup.portal-swal .swal2-styled {
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    padding: .58rem 1rem !important;
+}
+
+.swal2-popup.portal-swal .portal-swal-confirm {
+    background: linear-gradient(135deg, #4f46e5, #2563eb) !important;
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35) !important;
+}
+
+.swal2-popup.portal-swal .portal-swal-cancel {
+    background: #eef2ff !important;
+    color: #334155 !important;
+}
+
+.swal2-popup.portal-swal .portal-swal-hero {
+    position: relative;
+    padding: 0.15rem 0.2rem 0.25rem;
+}
+
+.swal2-popup.portal-swal .portal-swal-glow {
+    position: absolute;
+    inset: -6px -10px auto;
+    height: 44px;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.22), rgba(99, 102, 241, 0));
+    filter: blur(12px);
+    pointer-events: none;
+}
+
+.swal2-popup.portal-swal .portal-swal-sub {
+    position: relative;
+    font-size: 0.93rem;
+    line-height: 1.55;
+}
+
 /* Sidebar hierarchy: parent vs child */
 .menu-vertical .menu-inner>.menu-item>.menu-link {
     font-weight: 600;

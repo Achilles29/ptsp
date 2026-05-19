@@ -3,6 +3,43 @@
     font-size: 0.75rem;
     padding: 0.35em 0.6em;
   }
+  .antrian-fixed {
+    table-layout: fixed;
+    width: 100%;
+  }
+  .antrian-fixed th,
+  .antrian-fixed td {
+    white-space: normal !important;
+    word-break: break-word;
+    font-size: 0.92rem;
+  }
+  .antrian-fixed .col-no { width: 50px; }
+  .antrian-fixed .col-nomor { width: 110px; }
+  .antrian-fixed .col-nama { width: 220px; }
+  .antrian-fixed .col-hp { width: 110px; }
+  .antrian-fixed .col-layanan { width: 300px; }
+  .antrian-fixed .col-hadir { width: 85px; }
+  .antrian-fixed .col-status { width: 100px; }
+  .antrian-fixed .col-aksi { width: 180px; }
+  .antrian-fixed td:nth-child(6),
+  .antrian-fixed td:nth-child(7),
+  .antrian-fixed th:nth-child(6),
+  .antrian-fixed th:nth-child(7) {
+    text-align: center !important;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+  }
+  .antrian-fixed td:nth-child(6) .badge,
+  .antrian-fixed td:nth-child(7) .badge {
+    min-width: 70px;
+    display: inline-block;
+  }
+  .antrian-fixed .aksi-wrap .btn {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.35rem;
+  }
+  .antrian-fixed .aksi-wrap .btn:last-child { margin-bottom: 0; }
 </style>
 
 <div class="container-fluid px-4 mt-4">
@@ -24,7 +61,19 @@
     </section>
 
     <section class="portal-filter-card">
+      <ul class="nav nav-pills mb-3">
+        <li class="nav-item">
+          <a class="nav-link <?= $tab === 'aktif' ? 'active' : '' ?>" href="<?= base_url('admin_layanan/antrian_hari_ini?tab=aktif&search=' . urlencode($search) . '&limit=' . (int) $limit . '&hadir=' . urlencode($hadir) . '&status=' . urlencode($status)) ?>">Aktif</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <?= $tab === 'selesai' ? 'active' : '' ?>" href="<?= base_url('admin_layanan/antrian_hari_ini?tab=selesai&search=' . urlencode($search) . '&limit=' . (int) $limit . '&hadir=' . urlencode($hadir) . '&status=' . urlencode($status)) ?>">Selesai</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <?= $tab === 'semua' ? 'active' : '' ?>" href="<?= base_url('admin_layanan/antrian_hari_ini?tab=semua&search=' . urlencode($search) . '&limit=' . (int) $limit . '&hadir=' . urlencode($hadir) . '&status=' . urlencode($status)) ?>">Semua</a>
+        </li>
+      </ul>
       <form method="get" class="row g-2 align-items-end">
+        <input type="hidden" name="tab" value="<?= html_escape($tab) ?>">
         <div class="col-md-6 col-xl-5">
           <label class="form-label">Pencarian</label>
           <input type="text" name="search" class="form-control" placeholder="Cari nama, nomor, atau layanan" value="<?= $search ?>">
@@ -39,7 +88,30 @@
           </select>
         </div>
         <div class="col-md-3 col-xl-2">
+          <label class="form-label">Hadir</label>
+          <select name="hadir" class="form-select">
+            <option value="semua" <?= $hadir === 'semua' ? 'selected' : '' ?>>Semua</option>
+            <option value="hadir" <?= $hadir === 'hadir' ? 'selected' : '' ?>>Hadir</option>
+            <option value="belum" <?= $hadir === 'belum' ? 'selected' : '' ?>>Belum Hadir</option>
+          </select>
+        </div>
+        <div class="col-md-3 col-xl-2">
+          <label class="form-label">Status</label>
+          <select name="status" class="form-select">
+            <option value="" <?= $status === '' ? 'selected' : '' ?>>Semua</option>
+            <option value="terdaftar" <?= $status === 'terdaftar' ? 'selected' : '' ?>>Terdaftar</option>
+            <option value="dipanggil" <?= $status === 'dipanggil' ? 'selected' : '' ?>>Dipanggil</option>
+            <option value="selesai" <?= $status === 'selesai' ? 'selected' : '' ?>>Selesai</option>
+            <option value="batal" <?= $status === 'batal' ? 'selected' : '' ?>>Batal</option>
+          </select>
+        </div>
+        <div class="col-md-3 col-xl-2">
           <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search me-1"></i> Cari</button>
+        </div>
+        <div class="col-md-3 col-xl-2">
+          <a href="<?= base_url('admin_layanan/antrian_hari_ini?tab=' . urlencode($tab) . '&limit=' . (int) $limit . '&hadir=semua&status=') ?>" class="btn btn-outline-secondary w-100">
+            <i class="fas fa-eraser me-1"></i> Clear Filter
+          </a>
         </div>
       </form>
     </section>
@@ -48,23 +120,23 @@
       <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
         <div>
           <h5 class="portal-section-title">Daftar Antrian Aktif Hari Ini</h5>
-          <div class="portal-card-note">Nomor dengan status belum hadir akan ditandai khusus dan tidak bisa dipanggil.</div>
+          <div class="portal-card-note">Gunakan tab dan filter untuk memfokuskan data antrian harian.</div>
         </div>
         <span class="badge bg-primary-subtle text-primary-emphasis border border-primary-subtle"><?= count($antrian) ?> baris</span>
       </div>
       <div class="card-body">
       <div class="table-responsive">
-        <table class="table table-style align-middle table-scroll-x">
+        <table class="table table-style align-middle antrian-fixed">
           <thead class="text-center">
             <tr>
-              <th class="col-nowrap">No</th>
-              <th class="col-nowrap">Nomor Antrian</th>
-              <th class="col-name-min">Nama</th>
-              <th class="col-nowrap">No HP</th>
-              <th class="col-name-min">Layanan</th>
-              <th class="col-nowrap">Hadir</th>
-              <th class="col-nowrap">Status</th>
-              <th class="col-nowrap" width="200">Aksi</th>
+              <th class="col-no">No</th>
+              <th class="col-nomor">Nomor Antrian</th>
+              <th class="col-nama">Nama</th>
+              <th class="col-hp">No HP</th>
+              <th class="col-layanan">Layanan</th>
+              <th class="col-hadir">Hadir</th>
+              <th class="col-status">Status</th>
+              <th class="col-aksi">Aksi</th>
             </tr>
           </thead>
           <tbody id="antrian-body"><!-- ✅ penting: tambahkan id ini -->
@@ -113,14 +185,17 @@ switch ($a->status) {
   </td>
 
 <td>
-  <div class="d-flex flex-wrap justify-content-center gap-1">
+  <div class="aksi-wrap">
 
     <?php if ($a->status === 'dipanggil' && (int) $a->hadir === 1): ?>
 
       <!-- 🔊 PANGGIL ULANG (antrian aktif) -->
-      <a href="<?= base_url('admin_layanan/panggil_sync/'.$a->id) ?>"
+      <a href="javascript:void(0)" data-endpoint="<?= site_url('admin_layanan/panggil/') . (int) $a->id ?>"
               class="btn btn-sm btn-warning btn-panggil"
-              onclick="return confirm('Panggil ulang antrian ini?')">
+              data-action="panggil"
+              onclick="event.preventDefault();event.stopPropagation();if(window.runQueueAction){window.runQueueAction(this);}return false;"
+              data-id="<?= (int) $a->id ?>"
+             >
         <i class="bi bi-megaphone"></i>
         Panggil Ulang
       </a>
@@ -128,9 +203,12 @@ switch ($a->status) {
     <?php elseif ($a->status === 'terdaftar'): ?>
 
       <!-- 🔊 PANGGIL (tidak ada antrian aktif) -->
-      <a href="<?= base_url('admin_layanan/panggil_sync/'.$a->id) ?>"
+      <a href="javascript:void(0)" data-endpoint="<?= site_url('admin_layanan/panggil/') . (int) $a->id ?>"
               class="btn btn-sm btn-warning btn-panggil"
-              onclick="return confirm('Panggil antrian ini?')">
+              data-action="panggil"
+              onclick="event.preventDefault();event.stopPropagation();if(window.runQueueAction){window.runQueueAction(this);}return false;"
+              data-id="<?= (int) $a->id ?>"
+             >
         <i class="bi bi-megaphone"></i>
         <?= (int) $a->hadir === 1 ? 'Panggil' : 'Panggil (Auto Check-In)' ?>
       </a>
@@ -140,18 +218,24 @@ switch ($a->status) {
     <?php if ($a->status === 'terdaftar'): ?>
 
       <!-- ❌ BATAL -->
-      <a href="<?= base_url('admin_layanan/batal/'.$a->id) ?>"
+      <a href="javascript:void(0)" data-endpoint="<?= site_url('admin_layanan/batal/') . (int) $a->id ?>"
               class="btn btn-sm btn-outline-danger btn-batal"
-              onclick="return confirm('Batalkan antrian ini?')">
+              data-action="batal"
+              onclick="event.preventDefault();event.stopPropagation();if(window.runQueueAction){window.runQueueAction(this);}return false;"
+              data-id="<?= (int) $a->id ?>"
+             >
         <i class="bi bi-x-circle"></i> Batal
       </a>
 
     <?php elseif ($a->status === 'dipanggil'): ?>
 
       <!-- ✅ SELESAI -->
-      <a href="<?= base_url('admin_layanan/selesai/'.$a->id) ?>"
+      <a href="javascript:void(0)" data-endpoint="<?= site_url('admin_layanan/selesai/') . (int) $a->id ?>"
               class="btn btn-sm btn-success btn-selesai"
-              onclick="return confirm('Selesaikan antrian ini?')">
+              data-action="selesai"
+              onclick="event.preventDefault();event.stopPropagation();if(window.runQueueAction){window.runQueueAction(this);}return false;"
+              data-id="<?= (int) $a->id ?>"
+             >
         <i class="bi bi-check2-circle"></i> Selesai
       </a>
 
@@ -274,87 +358,137 @@ switch ($a->status) {
 </div>
 
 <script>
+const refreshUrl = '<?= base_url('admin_layanan/refresh_antrian?tab=' . urlencode($tab) . '&hadir=' . urlencode($hadir) . '&status=' . urlencode($status)) ?>';
 function refreshAntrian() {
-  $('#antrian-body').load('<?= base_url('admin_layanan/refresh_antrian') ?>', function() {
-    $('#antrian-body tr:first').addClass('table-success');
-    setTimeout(() => $('#antrian-body tr').removeClass('table-success'), 1500);
-  });
+  fetch(refreshUrl, { credentials: 'same-origin' })
+    .then(res => res.text())
+    .then(html => {
+      const tbody = document.getElementById('antrian-body');
+      if (!tbody) return;
+      tbody.innerHTML = html;
+      const first = tbody.querySelector('tr');
+      if (first) {
+        first.classList.add('table-success');
+        setTimeout(() => {
+          tbody.querySelectorAll('tr').forEach(tr => tr.classList.remove('table-success'));
+        }, 1500);
+      }
+    })
+    .catch(() => {});
 }
 </script>
 
 <script>
-$(function () {
-
+window.addEventListener('load', function () {
   setInterval(refreshAntrian, 10000);
+});
 
-  $(document).on('click', '.btn-panggil, .btn-batal', function (e) {
-    e.preventDefault();
+function queueActionConfig(action) {
+  if (action === 'panggil') {
+    return { title: 'Panggil Antrian', text: 'Nomor akan dipanggil ke loket sekarang.', icon: 'question' };
+  }
+  if (action === 'batal') {
+    return { title: 'Batalkan Antrian', text: 'Antrian ini akan dibatalkan.', icon: 'warning' };
+  }
+  return { title: 'Selesaikan Layanan', text: 'Status antrian akan diubah menjadi selesai.', icon: 'question' };
+}
 
-    const btn  = $(this);
-    const id   = btn.data('id');
-    const url  = btn.data('url');
-    const fallbackUrl = btn.data('fallback-url');
-    const type = btn.hasClass('btn-panggil') ? 'panggil' : 'batal';
+function runQueueAction(el) {
+  const action = el.getAttribute('data-action') || '';
+  const endpoint = el.getAttribute('data-endpoint') || '';
 
-    if (typeof Swal === 'undefined' || typeof Swal.fire !== 'function') {
-      if (type === 'panggil') {
-        if (fallbackUrl) window.location.href = fallbackUrl;
-        return;
-      }
-      if (url) window.location.href = url;
+  if (!action || !endpoint) return;
+
+  const cfg = queueActionConfig(action);
+  const ensureSwal = function(cb) {
+    if (typeof Swal !== 'undefined' && Swal.fire) return cb(true);
+    const old = document.getElementById('swal-dynamic-loader');
+    if (old) {
+      old.addEventListener('load', () => cb(typeof Swal !== 'undefined' && Swal.fire));
       return;
     }
+    const s = document.createElement('script');
+    s.id = 'swal-dynamic-loader';
+    s.src = '<?= base_url('assets/libs/sweetalert2/sweetalert2.all.min.js') ?>';
+    s.onload = () => cb(typeof Swal !== 'undefined' && Swal.fire);
+    s.onerror = () => cb(false);
+    document.head.appendChild(s);
+  };
 
-    Swal.fire({
-      title: type === 'panggil'
-        ? 'Panggil Antrian Ini?'
-        : 'Batalkan Antrian Ini?',
-      icon: type === 'batal' ? 'warning' : 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Ya, Lanjutkan',
-      cancelButtonText: 'Batal'
-    }).then(result => {
-      if (!result.isConfirmed) return;
-
-      if (type === 'panggil') {
-        $.ajax({
-          url: '<?= site_url('admin_layanan/panggil/') ?>' + id,
-          type: 'POST',
-          dataType: 'json',
-          success: function (res) {
-            if (res.success) {
-              Swal.fire({
-                icon: 'success',
-                title: 'Dipanggil',
-                text: res.nomor_antrian + ' menuju loket ' + res.loket,
-                timer: 1500,
-                showConfirmButton: false
-              });
-              refreshAntrian();
-            } else {
-              Swal.fire('Gagal', res.message || 'Terjadi kesalahan', 'error');
-            }
-          },
-          error: function (xhr) {
-            const msg = xhr.responseJSON && xhr.responseJSON.message
-              ? xhr.responseJSON.message
-              : 'Terjadi kesalahan saat memanggil antrian';
-            Swal.fire({
-              title: 'Gagal',
-              text: msg + '\nDialihkan ke mode pemanggilan langsung.',
-              icon: 'error'
-            }).then(() => {
-              if (fallbackUrl) window.location.href = fallbackUrl;
-            });
-          }
-        });
-      } else {
-        window.location.href = url;
+  const askConfirm = function(onYes) {
+    ensureSwal(function(ready){
+      if (!ready) {
+        const ok = confirm(cfg.title + '\n\n' + cfg.text);
+        if (ok) onYes();
+        return;
       }
+      Swal.fire({
+        title: cfg.title,
+        html:
+          '<div class="portal-swal-hero">' +
+          '<div class="portal-swal-glow"></div>' +
+          '<div class="portal-swal-sub">' + cfg.text + '</div>' +
+          '</div>',
+        icon: cfg.icon,
+        customClass: {
+          popup: 'portal-swal',
+          confirmButton: 'portal-swal-confirm',
+          cancelButton: 'portal-swal-cancel'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Proses',
+        cancelButtonText: 'Batal',
+        reverseButtons: true
+      }).then(function(result) {
+        if (result.isConfirmed) onYes();
+      });
     });
-  });
+  };
 
-});
+  const showResult = function(type, title, text) {
+    if (typeof Swal !== 'undefined' && Swal.fire) {
+      Swal.fire({
+        icon: type,
+        title: title,
+        text: text,
+        timer: type === 'success' ? 1300 : undefined,
+        showConfirmButton: type !== 'success',
+        customClass: { popup: 'portal-swal' }
+      });
+    }
+  };
+
+  askConfirm(function() {
+    fetch(endpoint, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+      .then(res => res.json())
+      .then(function (res) {
+        if (res && res.success) {
+          showResult('success', 'Berhasil', res.message || 'Aksi berhasil diproses.');
+          refreshAntrian();
+          return;
+        }
+        showResult('error', 'Gagal', (res && res.message) ? res.message : 'Aksi gagal diproses.');
+      })
+      .catch(function () {
+        const msg = 'Terjadi gangguan saat memproses aksi.';
+        showResult('error', 'Gagal', msg);
+      });
+  });
+}
+window.runQueueAction = runQueueAction;
+
+document.addEventListener('click', function (e) {
+  const targetEl = e.target && e.target.nodeType === 1 ? e.target : (e.target ? e.target.parentElement : null);
+  const trigger = targetEl ? targetEl.closest('a.btn-panggil, a.btn-batal, a.btn-selesai') : null;
+  if (!trigger) return;
+  e.preventDefault();
+  e.stopPropagation();
+  runQueueAction(trigger);
+}, true);
 </script>
 
 <script>
@@ -366,23 +500,6 @@ function syncHasilLayananRequirements() {
   $('#jenis_produk_hukum, #nomor_produk, #tanggal_produk').prop('required', !isKonsultasi);
   $('#catatan_petugas').prop('required', true);
 }
-
-$(document).on('click', '.btn-selesai', function () {
-
-  const id = $(this).data('id');
-
-  const form = $('#formHasilLayanan')[0];
-  form.reset();
-
-  $('#hasil_antrian_id').val(id);
-
-  $('input[name="jenis_hasil"][value="konsultasi"]').prop('checked', true);
-  $('#formKonsultasi').removeClass('d-none');
-  $('#formProdukHukum').addClass('d-none');
-  syncHasilLayananRequirements();
-
-  $('#modalHasilLayanan').modal('show');
-});
 </script>
 
 
@@ -476,12 +593,15 @@ $(document).on('submit', '#formHasilLayanan', function (e) {
     const limit = document.querySelector('select[name="limit"]').value;
     const tbody = document.querySelector('#antrian-body');
     const pagination = document.querySelector('.pagination');
+    const tab = (new URLSearchParams(window.location.search)).get('tab') || 'aktif';
+    const hadir = document.querySelector('select[name="hadir"]').value;
+    const status = document.querySelector('select[name="status"]').value;
 
     // Minimal 2 huruf untuk trigger search
     if (keyword.length < 2 && keyword !== '') return;
 
     // Panggil endpoint AJAX
-    fetch(`<?= base_url('admin_layanan/antrian_hari_ini_ajax') ?>?search=${encodeURIComponent(keyword)}&limit=${limit}`)
+    fetch(`<?= base_url('admin_layanan/antrian_hari_ini_ajax') ?>?tab=${encodeURIComponent(tab)}&search=${encodeURIComponent(keyword)}&limit=${limit}&hadir=${encodeURIComponent(hadir)}&status=${encodeURIComponent(status)}`)
       .then(res => res.text())
       .then(html => {
         tbody.innerHTML = html;
@@ -491,7 +611,7 @@ $(document).on('submit', '#formHasilLayanan', function (e) {
 
     // Jika input dikosongkan, reload halaman normal
     if (keyword === '') {
-      location.href = location.pathname + '?limit=' + limit;
+      location.href = location.pathname + '?tab=' + encodeURIComponent(tab) + '&limit=' + limit + '&hadir=' + encodeURIComponent(hadir) + '&status=' + encodeURIComponent(status);
     }
   });
   }

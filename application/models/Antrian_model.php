@@ -88,7 +88,7 @@ class Antrian_model extends CI_Model
       ->result();
   }
 
-  public function get_today_by_instansi($instansi_id, $limit = 25, $offset = 0, $search = '', $allowed_kode_layanan = [])
+  public function get_today_by_instansi($instansi_id, $limit = 25, $offset = 0, $search = '', $allowed_kode_layanan = [], $filters = [])
   {
     $this->db->select('a.*, u.nama_lengkap, u.no_hp, jl.nama_layanan, a.hadir');
     $this->db->from('antrian a');
@@ -97,6 +97,7 @@ class Antrian_model extends CI_Model
     $this->db->where('jl.instansi_id', $instansi_id);
     $this->_apply_kode_layanan_filter('jl', $allowed_kode_layanan);
     $this->db->where('a.tanggal', date('Y-m-d'));
+    $this->_apply_admin_layanan_filters($filters);
 
     if (!empty($search)) {
       $this->db->group_start()
@@ -117,7 +118,7 @@ class Antrian_model extends CI_Model
     return $this->db->get()->result();
   }
 
-  public function count_today_by_instansi($instansi_id, $search = '', $allowed_kode_layanan = [])
+  public function count_today_by_instansi($instansi_id, $search = '', $allowed_kode_layanan = [], $filters = [])
   {
     $this->db->from('antrian a');
     $this->db->join('jenis_layanan jl', 'jl.id = a.layanan_id', 'left');
@@ -125,6 +126,7 @@ class Antrian_model extends CI_Model
     $this->db->where('jl.instansi_id', $instansi_id);
     $this->_apply_kode_layanan_filter('jl', $allowed_kode_layanan);
     $this->db->where('a.tanggal', date('Y-m-d'));
+    $this->_apply_admin_layanan_filters($filters);
 
     if (!empty($search)) {
       $this->db->group_start()
@@ -136,6 +138,29 @@ class Antrian_model extends CI_Model
     }
 
     return $this->db->count_all_results();
+  }
+
+  private function _apply_admin_layanan_filters($filters = [])
+  {
+    $tab = isset($filters['tab']) ? (string) $filters['tab'] : 'aktif';
+    $hadir = isset($filters['hadir']) ? (string) $filters['hadir'] : 'semua';
+    $status = isset($filters['status']) ? (string) $filters['status'] : '';
+
+    if ($tab === 'aktif') {
+      $this->db->where_not_in('a.status', ['selesai', 'batal']);
+    } elseif ($tab === 'selesai') {
+      $this->db->where('a.status', 'selesai');
+    }
+
+    if ($hadir === 'hadir') {
+      $this->db->where('a.hadir', 1);
+    } elseif ($hadir === 'belum') {
+      $this->db->where('a.hadir', 0);
+    }
+
+    if ($status !== '' && $status !== 'semua') {
+      $this->db->where('a.status', $status);
+    }
   }
 
 

@@ -259,7 +259,7 @@
 
         // QR CODE UNTUK CHECK-IN ONLINE
         new QRCode(document.getElementById("qrcode"), {
-            text: "<?= site_url('pendaftaran/checkin') ?>",
+            text: "<?= site_url('checkin') ?>",
             width: 220,
             height: 220,
             colorDark: "#000",

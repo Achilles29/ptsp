@@ -1,0 +1,114 @@
+from flask import Flask, request, jsonify, make_response
+from escpos.printer import Win32Raw
+from datetime import datetime
+import os
+
+app = Flask(__name__)
+
+PRINTER_NAME = os.getenv("PRINTER_NAME") or "MPP POS"
+
+
+def add_cors(resp):
+    resp.headers["Access-Control-Allow-Origin"] = "*"
+    resp.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    resp.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    return resp
+
+
+@app.route("/", methods=["GET"])
+def index():
+    return add_cors(jsonify(
+        success=True,
+        message="PTSP printer server aktif",
+        printer=PRINTER_NAME,
+        endpoint="/print",
+        port=9100
+    ))
+
+
+@app.route("/health", methods=["GET"])
+def health():
+    return add_cors(jsonify(success=True, status="ok", printer=PRINTER_NAME))
+
+
+@app.route("/print", methods=["POST", "OPTIONS"])
+def print_ticket():
+    if request.method == "OPTIONS":
+        return add_cors(make_response("", 200))
+
+    data = request.get_json(silent=True) or {}
+
+    try:
+        layanan = data.get("layanan", "")
+        nomor = data.get("nomor", "") or "A000"
+        loket = data.get("loket")
+        sisa = data.get("sisa")
+
+        p = Win32Raw(PRINTER_NAME)
+
+        try:
+            now = datetime.now()
+            hari_map = {
+                0: "SENIN",
+                1: "SELASA",
+                2: "RABU",
+                3: "KAMIS",
+                4: "JUMAT",
+                5: "SABTU",
+                6: "MINGGU",
+            }
+
+            hari = hari_map.get(now.weekday(), "")
+            waktu = f"{hari} {now.strftime('%d %b %Y').upper()} JAM {now.strftime('%H:%M:%S')}"
+            sep = "-" * 32 + "\n"
+
+            p.set(align="center", bold=True)
+            p.text("MAL PELAYANAN PUBLIK\n")
+            p.text("REMBANG\n")
+
+            p.set(bold=False)
+            p.text(sep)
+            p.text(waktu + "\n\n")
+            p.text("NOMOR ANTRIAN\n")
+
+            p.set(bold=True)
+            p._raw(b"\x1d\x21\x33")
+            p.text(str(nomor) + "\n")
+            p._raw(b"\x1d\x21\x00")
+
+            p.set(bold=False, width=1, height=1)
+
+            if layanan:
+                p.text("(" + str(layanan) + ")\n")
+
+            if loket:
+                p.text("\nLOKET " + str(loket) + "\n")
+
+            p.text("\nMohon Menunggu Hingga Nomor Di Panggil\n")
+
+            if sisa is not None:
+                p.text("Yang Belum Di Panggil : " + str(sisa) + " Pemohon\n")
+
+            p.text("\n")
+            p.cut()
+
+        finally:
+            try:
+                p.close()
+            except Exception:
+                pass
+
+        return add_cors(jsonify(success=True, message="Berhasil cetak"))
+
+    except Exception as e:
+        return add_cors(jsonify(success=False, message=str(e))), 500
+
+
+if __name__ == "__main__":
+    cert_file = os.getenv("CERT_FILE")
+    key_file = os.getenv("KEY_FILE")
+
+    if cert_file and key_file:
+        app.run(host="127.0.0.1", port=9100, ssl_context=(cert_file, key_file))
+    else:
+        app.run(host="127.0.0.1", port=9100)

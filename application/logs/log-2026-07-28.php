@@ -1,0 +1,34 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+
+ERROR - 2026-07-28 00:20:50 --> 404 Page Not Found: Faviconico/index
+ERROR - 2026-07-28 02:30:00 --> 404 Page Not Found: Auth/index
+ERROR - 2026-07-28 03:00:37 --> 404 Page Not Found: Faviconico/index
+ERROR - 2026-07-28 07:25:20 --> 404 Page Not Found: Wp-json/batch
+ERROR - 2026-07-28 07:26:10 --> 404 Page Not Found: Wp/index
+ERROR - 2026-07-28 07:26:11 --> 404 Page Not Found: Wp/wp-json
+ERROR - 2026-07-28 07:26:12 --> 404 Page Not Found: Wordpress/index
+ERROR - 2026-07-28 07:26:13 --> 404 Page Not Found: Wordpress/wp-json
+ERROR - 2026-07-28 07:26:14 --> 404 Page Not Found: Blog/index
+ERROR - 2026-07-28 07:26:14 --> 404 Page Not Found: Blog/wp-json
+ERROR - 2026-07-28 07:26:15 --> 404 Page Not Found: Old/index
+ERROR - 2026-07-28 07:26:16 --> 404 Page Not Found: Old/wp-json
+ERROR - 2026-07-28 07:26:16 --> 404 Page Not Found: Test/index
+ERROR - 2026-07-28 07:26:17 --> 404 Page Not Found: Test/wp-json
+ERROR - 2026-07-28 07:26:18 --> 404 Page Not Found: Dev/index
+ERROR - 2026-07-28 07:26:18 --> 404 Page Not Found: Dev/wp-json
+ERROR - 2026-07-28 07:26:19 --> 404 Page Not Found: Backup/index
+ERROR - 2026-07-28 07:26:20 --> 404 Page Not Found: Backup/wp-json
+ERROR - 2026-07-28 07:26:21 --> 404 Page Not Found: Staging/index
+ERROR - 2026-07-28 07:26:22 --> 404 Page Not Found: Staging/wp-json
+ERROR - 2026-07-28 07:26:23 --> 404 Page Not Found: Wp-json/batch
+ERROR - 2026-07-28 11:31:33 --> 404 Page Not Found: Faviconico/index
+ERROR - 2026-07-28 11:43:47 --> 404 Page Not Found: Faviconico/index
+ERROR - 2026-07-28 11:46:09 --> 404 Page Not Found: Aws/credentials
+ERROR - 2026-07-28 11:46:11 --> 404 Page Not Found: Api/.env
+ERROR - 2026-07-28 11:46:12 --> 404 Page Not Found: Aws-sesjson/index
+ERROR - 2026-07-28 11:46:12 --> 404 Page Not Found: Stripe/index
+ERROR - 2026-07-28 11:46:12 --> 404 Page Not Found: Stripe/.env
+ERROR - 2026-07-28 11:46:14 --> 404 Page Not Found: Backend/.env
+ERROR - 2026-07-28 11:46:17 --> 404 Page Not Found: Configjsonsave/index
+ERROR - 2026-07-28 11:46:18 --> 404 Page Not Found: Configphpbak/index
+ERROR - 2026-07-28 11:48:31 --> 404 Page Not Found: Faviconico/index

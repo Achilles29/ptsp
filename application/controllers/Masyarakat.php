@@ -256,6 +256,99 @@ class Masyarakat extends CI_Controller
     redirect('masyarakat/antrian_saya');
   }
 
+  private function _get_checkin_candidates($user_id)
+  {
+    return $this->db
+      ->select('a.*, jl.nama_layanan, i.nama_instansi')
+      ->from('antrian a')
+      ->join('jenis_layanan jl', 'jl.id = a.layanan_id', 'left')
+      ->join('instansi i', 'i.id = jl.instansi_id', 'left')
+      ->where('a.user_id', (int) $user_id)
+      ->where('a.tanggal', date('Y-m-d'))
+      ->where('a.hadir', 0)
+      ->where_in('a.status', ['terdaftar', 'menunggu', 'dipanggil'])
+      ->order_by('a.created_at', 'ASC')
+      ->get()
+      ->result();
+  }
+
+  private function _mark_checkin($id, $user_id)
+  {
+    $antrian = $this->db
+      ->select('id')
+      ->from('antrian')
+      ->where('id', (int) $id)
+      ->where('user_id', (int) $user_id)
+      ->where('tanggal', date('Y-m-d'))
+      ->where('hadir', 0)
+      ->where_in('status', ['terdaftar', 'menunggu', 'dipanggil'])
+      ->get()
+      ->row();
+
+    if (!$antrian) {
+      return false;
+    }
+
+    return $this->db->where('id', (int) $id)->update('antrian', [
+      'hadir'        => 1,
+      'updated_at'   => date('Y-m-d H:i:s'),
+      'updated_by'   => (int) $user_id,
+      'updated_role' => 'masyarakat'
+    ]);
+  }
+
+  public function checkin_qr()
+  {
+    $user_id = $this->session->userdata('user_id');
+    $antrian = $this->_get_checkin_candidates($user_id);
+
+    if (empty($antrian)) {
+      $this->session->set_flashdata('error', 'Tidak ada antrian hari ini yang perlu check-in.');
+      redirect('masyarakat/antrian_saya');
+      return;
+    }
+
+    if (count($antrian) === 1) {
+      if ($this->_mark_checkin($antrian[0]->id, $user_id)) {
+        $this->session->set_flashdata('success', 'Check-in berhasil untuk nomor ' . $antrian[0]->nomor_antrian . '.');
+      } else {
+        $this->session->set_flashdata('error', 'Check-in gagal diproses.');
+      }
+      redirect('masyarakat/antrian_saya');
+      return;
+    }
+
+    $data['title'] = 'Pilih Antrian Check-In';
+    $data['user'] = $this->session->userdata();
+    $data['antrian'] = $antrian;
+
+    $this->load->view('templates_masyarakat/_header', $data);
+    $this->load->view('templates_masyarakat/_navbar', $data);
+    $this->load->view('masyarakat/checkin_pilih', $data);
+    $this->load->view('templates_masyarakat/_bottomnav', $data);
+    $this->load->view('templates_masyarakat/_footer', $data);
+  }
+
+  public function checkin_submit()
+  {
+    $user_id = $this->session->userdata('user_id');
+    $id = (int) $this->input->post('antrian_id');
+
+    if (!$id) {
+      $this->session->set_flashdata('error', 'Pilih salah satu antrian untuk check-in.');
+      redirect('masyarakat/checkin_qr');
+      return;
+    }
+
+    if ($this->_mark_checkin($id, $user_id)) {
+      $this->session->set_flashdata('success', 'Check-in berhasil.');
+    } else {
+      $this->session->set_flashdata('error', 'Antrian tidak valid, sudah check-in, atau bukan jadwal hari ini.');
+    }
+
+    redirect('masyarakat/antrian_saya');
+  }
+
   public function checkin()
   {
     // halaman kamera scan

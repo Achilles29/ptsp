@@ -38,6 +38,27 @@ class Auth extends CI_Controller
     ]);
   }
 
+  private function _redirect_after_login($role_id)
+  {
+    $after_login = (string) $this->session->userdata('after_login_redirect');
+    if ((int) $role_id === 4 && $after_login !== '') {
+      $this->session->unset_userdata('after_login_redirect');
+      if (preg_match('#^(masyarakat|checkin)(/|$)#', $after_login)) {
+        redirect($after_login);
+      }
+    } elseif ($after_login !== '') {
+      $this->session->unset_userdata('after_login_redirect');
+    }
+
+    switch ((int) $role_id) {
+      case 1: redirect('superadmin/dashboard'); break;
+      case 2: redirect('admin_layanan/dashboard'); break;
+      case 3: redirect('dashboard'); break;
+      case 4: redirect('masyarakat/dashboard'); break;
+      default: break;
+    }
+  }
+
   private function _issue_remember_cookie($user_id)
   {
     $raw_token = bin2hex(random_bytes(32));
@@ -110,25 +131,11 @@ class Auth extends CI_Controller
   public function login()
   {
     if ($this->session->userdata('logged_in')) {
-      $role_id = (int) $this->session->userdata('role_id');
-      switch ($role_id) {
-        case 1: redirect('superadmin/dashboard'); break;
-        case 2: redirect('admin_layanan/dashboard'); break;
-        case 3: redirect('dashboard'); break;
-        case 4: redirect('masyarakat/dashboard'); break;
-        default: break;
-      }
+      $this->_redirect_after_login((int) $this->session->userdata('role_id'));
     }
 
     if ($this->_auto_login_from_cookie()) {
-      $role_id = (int) $this->session->userdata('role_id');
-      switch ($role_id) {
-        case 1: redirect('superadmin/dashboard'); break;
-        case 2: redirect('admin_layanan/dashboard'); break;
-        case 3: redirect('dashboard'); break;
-        case 4: redirect('masyarakat/dashboard'); break;
-        default: break;
-      }
+      $this->_redirect_after_login((int) $this->session->userdata('role_id'));
     }
 
     $this->load->library('form_validation');
@@ -182,24 +189,7 @@ class Auth extends CI_Controller
         $this->_clear_remember_cookie($user->id);
       }
 
-      // Redirect sesuai role
-      switch ($user->role_id) {
-        case 1:
-          redirect('superadmin/dashboard');
-          break;
-        case 2:
-          redirect('admin_layanan/dashboard');
-          break;
-        case 3:
-          redirect('dashboard');
-          break;
-        case 4:
-          redirect('masyarakat/dashboard');
-          break;
-        default:
-          $this->session->set_flashdata('error', 'Role tidak dikenali.');
-          redirect('auth/login');
-      }
+      $this->_redirect_after_login((int) $user->role_id);
     }
   }
 

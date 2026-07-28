@@ -1,227 +1,165 @@
-LAKUKAN SETELAH PULL GIT:
-- ganti config database dengan database.backup
-- ganti .httaccess dengan .httaccess.bak
-- ganti .user.ini dengan .user.ini.bak
-- import db
+from flask import Flask, request, jsonify, make_response
+from escpos.printer import Win32Raw
+from datetime import datetime
+import os
 
-root@dpmptsp:/home/dpmptsp/www/ptsp# cp -r .htaccess.bak .htaccess
-root@dpmptsp:/home/dpmptsp/www/ptsp# cp -r .user.ini.bak .user.ini
+app = Flask(__name__)
 
-cd application/config/
-cp -r database.php.bak database.php
+PRINTER_NAME = os.getenv("PRINTER_NAME") or "MPP POS"
 
-sudo chown -R www-data:www-data /home/dpmptsp/www/ptsp
-sudo chmod -R 755 /home/dpmptsp/www/ptsp
 
+def add_cors(resp):
+    resp.headers["Access-Control-Allow-Origin"] = "*"
+    resp.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    resp.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    return resp
 
 
+@app.route("/", methods=["GET"])
+def index():
+    return add_cors(jsonify(
+        success=True,
+        message="PTSP printer server aktif",
+        printer=PRINTER_NAME,
+        endpoint="/print",
+        port=9100
+    ))
 
 
+@app.route("/health", methods=["GET"])
+def health():
+    return add_cors(jsonify(success=True, status="ok", printer=PRINTER_NAME))
 
 
-===Masyarakat
+@app.route("/print", methods=["POST", "OPTIONS"])
+def print_ticket():
+    if request.method == "OPTIONS":
+        return add_cors(make_response("", 200))
 
-Riwayat Antrian?
+    data = request.get_json(silent=True) or {}
 
-Halaman Chat CS?
+    try:
+        layanan = data.get("layanan", "")
+        nomor = data.get("nomor", "") or "A000"
+        loket = data.get("loket")
+        sisa = data.get("sisa")
 
-Atau fitur cetak tiket (dengan QR)?
-halaman pengaturan user masyarakat (ganti nama dll)
+        p = Win32Raw(PRINTER_NAME)
 
-- saat jam tutup, admin melakukan tutup layanan, dan status yang belum selesai dijadikan batal semua
-- halaman managemen layanan (superadmin)
-- halaman managemen user (superadmin)
-- lupa password user
-- halaman depan untuk daftar ulang (barcode), daftar manual
-- daftar pilih instansi dulu 
-- buka tutup layanan
-- halaman Verifikasi oleh admin
-- kembalikan status ke terdaftar (ketika dipanggil tapi tidak ada)
-- pengaturan record
-- halaman panggilan
-- tambah kolom hadir di antrian (sudah daftar ulang)
-=====================
+        try:
+            now = datetime.now()
+            hari_map = {
+                0: "SENIN",
+                1: "SELASA",
+                2: "RABU",
+                3: "KAMIS",
+                4: "JUMAT",
+                5: "SABTU",
+                6: "MINGGU",
+            }
 
+            hari = hari_map.get(now.weekday(), "")
+            waktu = f"{hari} {now.strftime('%d %b %Y').upper()} JAM {now.strftime('%H:%M:%S')}"
+            sep = "-" * 32 + "\n"
 
+            p.set(align="center", bold=True)
+            p.text("MAL PELAYANAN PUBLIK\n")
+            p.text("REMBANG\n")
 
-🛡 Untuk Superadmin
-1. Laporan Statistik Antrian
+            p.set(bold=False)
+            p.text(sep)
+            p.text(waktu + "\n\n")
+            p.text("NOMOR ANTRIAN\n")
 
-    Jumlah antrian per hari/minggu/bulan per instansi.
+            p.set(bold=True)
+            p._raw(b"\x1d\x21\x33")
+            p.text(str(nomor) + "\n")
+            p._raw(b"\x1d\x21\x00")
 
-    Jumlah user aktif.
+            p.set(bold=False, width=1, height=1)
 
-    Grafik tren jumlah antrian dan kehadiran.
+            if layanan:
+                p.text("(" + str(layanan) + ")\n")
 
-2. Manajemen Jadwal Layanan
+            if loket:
+                p.text("\nLOKET " + str(loket) + "\n")
 
-    Atur jam buka/tutup per instansi.
+            p.text("\nMohon Menunggu Hingga Nomor Di Panggil\n")
 
-    Hari libur nasional atau cuti bersama → disable antrian otomatis.
+            if sisa is not None:
+                p.text("Yang Belum Di Panggil : " + str(sisa) + " Pemohon\n")
 
-3. Notifikasi Broadcast ke Semua Admin Layanan
+            p.text("\n")
+            p.cut()
 
-    Kirim pengumuman (misalnya: "Sistem akan maintenance jam 15.00").
+        finally:
+            try:
+                p.close()
+            except Exception:
+                pass
 
-    Bisa via email atau WhatsApp Gateway (jika diaktifkan).
+        return add_cors(jsonify(success=True, message="Berhasil cetak"))
 
+    except Exception as e:
+        return add_cors(jsonify(success=False, message=str(e))), 500
 
 
-🧑‍💼 Untuk Admin Layanan
-1. Riwayat Tindakan CS
+if __name__ == "__main__":
+    cert_file = os.getenv("CERT_FILE")
+    key_file = os.getenv("KEY_FILE")
 
-    Log siapa yang memanggil, menandai hadir, atau menyelesaikan antrian.
+    if cert_file and key_file:
+        app.run(host="127.0.0.1", port=9100, ssl_context=(cert_file, key_file))
+    else:
+        app.run(host="127.0.0.1", port=9100)
 
-    Waktu dan urutan tindakan tercatat untuk audit.
 
-2. Laporan Kepuasan Layanan
 
-    Tambahkan fitur rating setelah selesai (oleh masyarakat).
+start_printer.bat
 
-    Statistik rating rata-rata, kritik/saran per layanan.
+        @echo off
+cd /d C:\ptsp-print
+start "" /min C:\ptsp-print\venv\Scripts\python.exe C:\ptsp-print\printer_win_simple.py
 
-3. Multi-Counter Support
+@echo off
+cd /d C:\ptsp-print
+start "" /min "C:\Users\User\AppData\Local\Programs\Python\Python314\python.exe" "C:\ptsp-print\thermal_server.py"
 
-    Jika 1 layanan punya lebih dari 1 meja/loket → admin bisa set counter A, B, C.
 
-4. Live Monitoring
 
-    Tampilkan antrian real-time seperti dashboard TV.
+@echo off
+cd /d C:\ptsp-print
+start "" "C:\Users\User\AppData\Local\Programs\Python\Python314\pythonw.exe" "C:\ptsp-print\thermal_server.py"
 
-    Bisa ditampilkan di layar televisi di tempat layanan.
+start_kiosk.bat
 
+@echo off
+timeout /t 10 /nobreak
 
+start "" msedge --app=https://antrian-mpp.rembangkab.go.id/pendaftaran/manual_v2_tab --start-fullscreen --disable-session-crashed-bubble --disable-infobars
 
-👨‍👩‍👧 Untuk Masyarakat (User)
-1. Riwayat Antrian Saya
+start "" chrome --app=https://antrian-mpp.rembangkab.go.id/pendaftaran/manual_v2_tab --start-fullscreen --disable-session-crashed-bubble --disable-
 
-    Tampilkan semua antrian yang pernah diambil.
 
-    Status: Selesai, Batal, Tidak Hadir.
 
-2. Notifikasi Antrian
 
-    Kirim notifikasi via WhatsApp atau Email saat antrian hampir dipanggil.
 
-    Bisa diatur: “Ingatkan 5 nomor sebelum giliran”.
 
-3. Batalkan Antrian Mandiri
+@echo off
+cd /d C:\ptsp-printer
+start "" "C:\Users\User\AppData\Local\Programs\Python\Python314\pythonw.exe" "C:\ptsp-printer\thermal_server.py"
 
-    Jika pengguna tidak bisa hadir, bisa batalkan via web (dengan batas waktu tertentu).
+@echo off
+cd /d C:\ptsp-print
+start "" "C:\Users\User\AppData\Local\Programs\Python\Python314\pythonw.exe" "C:\ptsp-print\thermal_server.py"
 
-4. Ubah Jadwal
 
-    Jika masih di hari yang sama dan belum dipanggil, bisa ubah jam ke slot lain.
 
+pip install flask pyusb python-escpos pywin32
 
+python -c "import flask, usb, escpos, win32print; print('OK')"
 
-📦 Umum & Tambahan
-1. QR Code Cek Antrian
+@echo off
+cd /d C:\ptsp-printer
 
-    Masyarakat bisa scan QR di kantor untuk lihat posisi antrian terkini.
-
-2. Export Laporan
-
-    Superadmin dan Admin bisa ekspor data antrian (CSV/Excel) berdasarkan filter tanggal/layanan/status.
-
-3. Mode Offline
-
-    Jika internet mati, admin tetap bisa input manual → akan tersinkron saat online.
-
-
-===== admin layanan
-
-🔜 Lanjut ke:
-
-v    Halaman “Antrian Hari Ini” interaktif?
-v    Halaman “Panggilan” dengan tombol “Panggil Sekarang”?
-    Atau rekap laporan PDF/Excel?
-
-    tampilkan nama layanan di dashboard admin pelayanan .....
-    anda bertugas sebagai admin ....
-
-
-
-Menampilkan detail antrian saat diklik?
-Menambahkan real-time update atau refresh otomatis?
-Menambahkan fitur panggil suara/layar antrian?
-
-
-
-🔐 Langkah-langkah Mendapatkan App Password Gmail:
-
-Masuk ke akun Gmail Anda di: https://myaccount.google.com
-Masuk ke Keamanan > Verifikasi 2 Langkah (aktifkan jika belum).
-Setelah aktif, buka halaman App Passwords
-Buat App Password baru untuk aplikasi Other → beri nama CI3 PTSP.
-Simpan App Password 16 karakter yang diberikan, misalnya:
-
-nkuokaikzdrsunbk 
-
-
-
-
-
-TRUNCATE
-SET FOREIGN_KEY_CHECKS = 0;
-
-TRUNCATE TABLE users;
-
-SET FOREIGN_KEY_CHECKS = 1;
-
-
-
-setup printer:
-✅ A. Cek via Device Manager (WAJIB)
-
-Colokkan printer ke USB
-
-Nyalakan printer
-
-Buka Device Manager
-
-Perhatikan bagian berikut:
-
-🔍 Biasanya muncul di:
-
-Universal Serial Bus controllers
-
-USB Printing Support
-
-atau
-
-Ports (COM & LPT)
-
-USB001 (Virtual printer port for USB)
-
-📌 Kalau muncul USB Printing Support → printer TERHUBUNG
-
-
-
-3️⃣ Tambahkan Printer Manual (TANPA DRIVER)
-
-Kalau printer terdeteksi USB tapi tidak muncul sebagai printer:
-
-➕ Tambah Printer Manual
-
-Add Printer
-
-Tunggu → pilih "The printer that I want isn’t listed"
-
-Pilih Add a local printer
-
-Port:
-
-USB001 (Virtual printer port for USB)
-
-Driver:
-
-Manufacturer: Generic
-
-Printer: Generic / Text Only
-
-Nama printer:
-
-EPOS_THERMAL (bebas, tapi konsisten)
-
-✅ Selesai — printer siap cetak RAW
+start "" "C:\Users\User\AppData\Local\Programs\Python\Python314\pythonw.exe" "C:\ptsp-printer\thermal_server.py"

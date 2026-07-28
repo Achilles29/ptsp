@@ -1,0 +1,35 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+
+ERROR - 2026-07-03 00:33:43 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-07-03 00:33:44 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-07-03 03:14:37 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-07-03 04:02:37 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-07-03 06:04:11 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-07-03 06:20:14 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-07-03 07:10:02 --> 404 Page Not Found: Wp-content/plugins
+ERROR - 2026-07-03 07:10:03 --> 404 Page Not Found: Wp-json/wp
+ERROR - 2026-07-03 09:19:10 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-07-03 09:25:22 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-07-03 12:10:18 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-07-03 12:12:46 --> 404 Page Not Found: Wp-includes/ID3
+ERROR - 2026-07-03 12:12:47 --> 404 Page Not Found: Feed/index
+ERROR - 2026-07-03 12:12:49 --> 404 Page Not Found: Blog/wp-includes
+ERROR - 2026-07-03 12:12:49 --> 404 Page Not Found: Web/wp-includes
+ERROR - 2026-07-03 12:12:50 --> 404 Page Not Found: Wordpress/wp-includes
+ERROR - 2026-07-03 12:12:51 --> 404 Page Not Found: Wp/wp-includes
+ERROR - 2026-07-03 12:12:51 --> 404 Page Not Found: 2020/wp-includes
+ERROR - 2026-07-03 12:12:52 --> 404 Page Not Found: 2019/wp-includes
+ERROR - 2026-07-03 12:12:52 --> 404 Page Not Found: 2021/wp-includes
+ERROR - 2026-07-03 12:12:52 --> 404 Page Not Found: Shop/wp-includes
+ERROR - 2026-07-03 12:12:53 --> 404 Page Not Found: Wp1/wp-includes
+ERROR - 2026-07-03 12:12:53 --> 404 Page Not Found: Test/wp-includes
+ERROR - 2026-07-03 12:12:53 --> 404 Page Not Found: Site/wp-includes
+ERROR - 2026-07-03 12:12:54 --> 404 Page Not Found: Cms/wp-includes
+ERROR - 2026-07-03 12:14:07 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-07-03 15:19:11 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-07-03 15:21:27 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-07-03 15:21:52 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-07-03 17:58:24 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-07-03 18:12:36 --> 404 Page Not Found: Sitemapxml/index
+ERROR - 2026-07-03 21:07:02 --> 404 Page Not Found: Robotstxt/index
+ERROR - 2026-07-03 21:07:03 --> 404 Page Not Found: Sitemapxml/index

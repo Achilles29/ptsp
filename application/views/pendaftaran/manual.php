@@ -128,7 +128,7 @@ const PRINT_SERVER_URL = "http://127.0.0.1:9100/print";
 
 /* QR */
 new QRCode(document.getElementById("qrcode"),{
-    text:"<?= site_url('pendaftaran/checkin') ?>",
+    text:"<?= site_url('checkin') ?>",
     width:240,height:240
 });
 

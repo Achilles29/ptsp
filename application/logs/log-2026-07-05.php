@@ -1,0 +1,37 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+
+ERROR - 2026-07-05 04:33:29 --> 404 Page Not Found: Faviconico/index
+ERROR - 2026-07-05 09:11:11 --> 404 Page Not Found: Wp-includes/wlwmanifest.xml
+ERROR - 2026-07-05 09:11:12 --> 404 Page Not Found: Blog/wp-includes
+ERROR - 2026-07-05 09:11:13 --> 404 Page Not Found: Web/wp-includes
+ERROR - 2026-07-05 09:11:13 --> 404 Page Not Found: Wordpress/wp-includes
+ERROR - 2026-07-05 09:11:13 --> 404 Page Not Found: Website/wp-includes
+ERROR - 2026-07-05 09:11:13 --> 404 Page Not Found: Wp/wp-includes
+ERROR - 2026-07-05 09:11:14 --> 404 Page Not Found: News/wp-includes
+ERROR - 2026-07-05 09:11:14 --> 404 Page Not Found: 2018/wp-includes
+ERROR - 2026-07-05 09:11:14 --> 404 Page Not Found: 2019/wp-includes
+ERROR - 2026-07-05 09:11:14 --> 404 Page Not Found: Shop/wp-includes
+ERROR - 2026-07-05 09:11:14 --> 404 Page Not Found: Wp1/wp-includes
+ERROR - 2026-07-05 09:11:15 --> 404 Page Not Found: Test/wp-includes
+ERROR - 2026-07-05 09:11:15 --> 404 Page Not Found: Media/wp-includes
+ERROR - 2026-07-05 09:11:15 --> 404 Page Not Found: Wp2/wp-includes
+ERROR - 2026-07-05 09:11:15 --> 404 Page Not Found: Site/wp-includes
+ERROR - 2026-07-05 09:11:16 --> 404 Page Not Found: Cms/wp-includes
+ERROR - 2026-07-05 09:11:16 --> 404 Page Not Found: Sito/wp-includes
+ERROR - 2026-07-05 20:20:55 --> 404 Page Not Found: Wp-includes/wlwmanifest.xml
+ERROR - 2026-07-05 20:20:56 --> 404 Page Not Found: Blog/wp-includes
+ERROR - 2026-07-05 20:20:57 --> 404 Page Not Found: Web/wp-includes
+ERROR - 2026-07-05 20:20:57 --> 404 Page Not Found: Wordpress/wp-includes
+ERROR - 2026-07-05 20:20:58 --> 404 Page Not Found: Website/wp-includes
+ERROR - 2026-07-05 20:20:59 --> 404 Page Not Found: Wp/wp-includes
+ERROR - 2026-07-05 20:21:00 --> 404 Page Not Found: News/wp-includes
+ERROR - 2026-07-05 20:21:01 --> 404 Page Not Found: 2018/wp-includes
+ERROR - 2026-07-05 20:21:02 --> 404 Page Not Found: 2019/wp-includes
+ERROR - 2026-07-05 20:21:03 --> 404 Page Not Found: Shop/wp-includes
+ERROR - 2026-07-05 20:21:04 --> 404 Page Not Found: Wp1/wp-includes
+ERROR - 2026-07-05 20:21:04 --> 404 Page Not Found: Test/wp-includes
+ERROR - 2026-07-05 20:21:05 --> 404 Page Not Found: Media/wp-includes
+ERROR - 2026-07-05 20:21:06 --> 404 Page Not Found: Wp2/wp-includes
+ERROR - 2026-07-05 20:21:07 --> 404 Page Not Found: Site/wp-includes
+ERROR - 2026-07-05 20:21:08 --> 404 Page Not Found: Cms/wp-includes
+ERROR - 2026-07-05 20:21:08 --> 404 Page Not Found: Sito/wp-includes
